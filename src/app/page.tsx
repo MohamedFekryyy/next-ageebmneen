@@ -25,6 +25,7 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ChevronUpIcon } from 'lucide-react';
 import { useMediaQuery } from '@/lib/useMediaQuery';
+import { TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Exchange rates (EGP per unit, June 2025, approx)
 const rates = {
@@ -302,10 +303,19 @@ export default function Home() {
 
         {/* Price Abroad Input */}
         <div className="w-full">
-          <label htmlFor="priceAbroad" className="block text-sm font-medium mb-1">
-            السعر بره
-          </label>
-          <div className="relative w-full">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <label htmlFor="priceAbroad" className="block text-sm font-medium mb-1 truncate w-full" dir="rtl">
+                  السعر بره
+                </label>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                السعر بره
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div className="relative flex flex-row-reverse items-center w-full">
             <Input
               type="number"
               id="priceAbroad"
@@ -315,18 +325,18 @@ export default function Home() {
                 const numVal = parseFloat(val) || 0;
                 const convertedEGP = numVal * rate;
                 if (checkHighValue(convertedEGP)) {
-                  // Optionally clear or keep the old value; here we keep it
                   return;
                 }
                 setPriceAbroad(val);
               }}
               placeholder="مثال: 800"
-              className="text-right w-full appearance-none pr-4 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="text-right w-full appearance-none pr-4 pl-[4ch] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="السعر بره"
               style={{ MozAppearance: 'textfield' }}
+              inputMode="decimal"
+              pattern="[0-9]*"
             />
-            {/* Show selected currency symbol at far left */}
-            <span className="absolute inset-y-0 left-3 flex items-center text-muted-foreground pointer-events-none">
+            <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">
               {currencyLabel}
             </span>
           </div>
@@ -334,22 +344,32 @@ export default function Home() {
 
         {/* Local Price Input */}
         <div className="w-full">
-          <label htmlFor="localPrice" className="block text-sm font-medium mb-1">
-            السعر في مصر (جنيه)
-          </label>
-          <div className="relative w-full">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <label htmlFor="localPrice" className="block text-sm font-medium mb-1 truncate w-full" dir="rtl">
+                  السعر في مصر (جنيه)
+                </label>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                السعر في مصر (جنيه)
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <div className="relative flex flex-row-reverse items-center w-full">
             <Input
               type="number"
               id="localPrice"
               value={localPrice}
               onChange={e => setLocalPrice(e.target.value)}
               placeholder="مثال: 20000"
-              className="text-right w-full appearance-none pr-4 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="text-right w-full appearance-none pr-4 pl-[4ch] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="السعر في مصر"
               style={{ MozAppearance: 'textfield' }}
+              inputMode="decimal"
+              pattern="[0-9]*"
             />
-            {/* Show EGP at far left */}
-            <span className="absolute inset-y-0 left-3 flex items-center text-muted-foreground pointer-events-none">
+            <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">
               EGP
             </span>
           </div>
