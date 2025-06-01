@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@fontsource/ibm-plex-sans-arabic/index.css";
+@import "@fontsource/kanit/index.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,5 +120,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif;
   }
+}
+
+html {
+  direction: rtl;
 }
