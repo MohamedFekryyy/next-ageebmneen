@@ -16,9 +16,9 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import PriceBreakdown from "@/components/PriceBreakdown";
+import { useHighValueGuard } from "@/lib/useHighValueGuard";
 
 // Exchange rates (EGP per unit, June 2025, approx)
 const rates = {
@@ -57,6 +57,7 @@ export default function Home() {
   const [customsRate, setCustomsRate] = useState(38); // percent
   const [onePhone, setOnePhone] = useState(true); // true = one phone (duty free)
   const [lastCustomsRate, setLastCustomsRate] = useState(38);
+  const { checkHighValue } = useHighValueGuard();
 
   // Compute EGP value for priceAbroad
   const rate = rates[country].rate;
@@ -82,7 +83,7 @@ export default function Home() {
   const abroadTaxCustoms = totalAbroad;
 
   // If customs is not applicable, grey out or hide the customs bar
-  let abroadVals: number[] = [localPriceNum, abroadTaxOnly, abroadTaxCustoms];
+  const abroadVals: number[] = [localPriceNum, abroadTaxOnly, abroadTaxCustoms];
   let barColors: string[] = [];
   let customsBarLabel = 'بره (ضريبة + جمارك)';
   if (customs === 0) {
@@ -136,18 +137,6 @@ export default function Home() {
       y: { title: { display: true, text: 'السعر بالجنيه' }, beginAtZero: true },
     },
   };
-
-  // Decision message logic
-  let decisionMsg = "";
-  if (localPriceNum && abroadRaw) {
-    if (diff > 0) {
-      decisionMsg = `أوفر لك تستورد: هتوفر حوالي ${diff.toLocaleString()} جم.`;
-    } else if (diff < 0) {
-      decisionMsg = `الأوفر تشتري من مصر: هتوفر حوالي ${Math.abs(diff).toLocaleString()} جم.`;
-    } else {
-      decisionMsg = "السعرين متقاربين جدًا.";
-    }
-  }
 
   // Only show chart and breakdown if all inputs are filled
   const allInputsFilled = country && priceAbroad && localPrice;
@@ -224,7 +213,16 @@ export default function Home() {
               type="number"
               id="priceAbroad"
               value={priceAbroad}
-              onChange={e => setPriceAbroad(e.target.value)}
+              onChange={e => {
+                const val = e.target.value;
+                const numVal = parseFloat(val) || 0;
+                const convertedEGP = numVal * rate;
+                if (checkHighValue(convertedEGP)) {
+                  // Optionally clear or keep the old value; here we keep it
+                  return;
+                }
+                setPriceAbroad(val);
+              }}
               placeholder="مثال: 800"
               className="text-right w-full appearance-none pr-4 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="السعر بره"
