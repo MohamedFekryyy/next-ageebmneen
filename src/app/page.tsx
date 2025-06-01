@@ -60,9 +60,7 @@ export default function Home() {
   const [country, setCountry] = useState<CountryCode>("SAU");
   const [priceAbroad, setPriceAbroad] = useState("");
   const [localPrice, setLocalPrice] = useState("");
-  const [customsRate, setCustomsRate] = useState(38); // percent
   const [onePhone, setOnePhone] = useState(true); // true = one phone (duty free)
-  const [lastCustomsRate, setLastCustomsRate] = useState(38);
   const { checkHighValue } = useHighValueGuard();
   const [mode, setMode] = useState<'phone' | 'laptop'>('phone');
   const [caught, setCaught] = useState(false);
@@ -73,7 +71,6 @@ export default function Home() {
   const rate = rates[country].rate;
   const currencyLabel = rates[country].cur;
   const abroadRaw = parseFloat(priceAbroad) || 0;
-  const priceInEGP = abroadRaw ? abroadRaw * rate : 0;
 
   // Update calculation logic
   const base = abroadRaw * rate;
@@ -153,7 +150,7 @@ export default function Home() {
   const allInputsFilled = country && priceAbroad && localPrice;
 
   const isMobile = useMediaQuery("(max-width: 640px)");
-  const countries = Object.entries(rates).map(([code, { cur }]) => ({
+  const countries = Object.entries(rates).map(([code]) => ({
     code,
     flag: countryFlags[code as CountryCode],
     label: (() => {
