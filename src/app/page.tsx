@@ -21,6 +21,10 @@ import PriceBreakdown from "@/components/PriceBreakdown";
 import { useHighValueGuard } from "@/lib/useHighValueGuard";
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Switch } from '@/components/ui/switch';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { ChevronUpIcon } from 'lucide-react';
+import { useMediaQuery } from '@/lib/useMediaQuery';
 
 // Exchange rates (EGP per unit, June 2025, approx)
 const rates = {
@@ -63,6 +67,7 @@ export default function Home() {
   const [mode, setMode] = useState<'phone' | 'laptop'>('phone');
   const [caught, setCaught] = useState(false);
   const [taxRate, setTaxRate] = useState(18);
+  const [countrySheetOpen, setCountrySheetOpen] = useState(false);
 
   // Compute EGP value for priceAbroad
   const rate = rates[country].rate;
@@ -147,6 +152,33 @@ export default function Home() {
   // Only show chart and breakdown if all inputs are filled
   const allInputsFilled = country && priceAbroad && localPrice;
 
+  const isMobile = useMediaQuery("(max-width: 640px)");
+  const countries = Object.entries(rates).map(([code, { cur }]) => ({
+    code,
+    flag: countryFlags[code as CountryCode],
+    label: (() => {
+      switch (code) {
+        case 'USA': return 'أمريكا (دولار)';
+        case 'EUR': return 'أوروبا (يورو)';
+        case 'SAU': return 'السعودية (ريـال)';
+        case 'UAE': return 'الإمارات (درهم)';
+        case 'KWT': return 'الكويت (دينار)';
+        case 'OMN': return 'عُمان (ريـال)';
+        case 'QAT': return 'قطر (ريـال)';
+        case 'TUR': return 'تركيا (ليرة)';
+        case 'LBY': return 'ليبيا (دينار)';
+        case 'IRQ': return 'العراق (دينار)';
+        case 'EGY': return 'مصر (جنيه)';
+        case 'JOR': return 'الأردن (دينار)';
+        case 'LBN': return 'لبنان (ليرة)';
+        case 'MAR': return 'المغرب (درهم)';
+        case 'TUN': return 'تونس (دينار)';
+        case 'ALG': return 'الجزائر (دينار)';
+        default: return code;
+      }
+    })(),
+  }));
+
   return (
     <div
       dir="rtl"
@@ -154,8 +186,14 @@ export default function Home() {
       className={`p-4 max-w-md mx-auto w-full pt-4 md:pt-20 lg:pt-24 ${!allInputsFilled ? 'min-h-screen flex flex-col justify-center items-center' : ''}`}
     >
       {/* Device Mode Toggle */}
-      <div className="flex justify-center mb-4">
-        <ToggleGroup type="single" value={mode} onValueChange={(val) => setMode(val as 'phone' | 'laptop')} aria-label="اختر نوع الجهاز">
+      <div className="flex justify-center mb-4" dir="ltr">
+        <ToggleGroup
+          type="single"
+          variant="outline"
+          value={mode}
+          onValueChange={(val) => setMode(val as 'phone' | 'laptop')}
+          aria-label="اختر نوع الجهاز"
+        >
           <ToggleGroupItem value="phone" aria-label="موبايل">📱 موبايل</ToggleGroupItem>
           <ToggleGroupItem value="laptop" aria-label="لابتوب">💻 لابتوب</ToggleGroupItem>
         </ToggleGroup>
@@ -208,53 +246,61 @@ export default function Home() {
           <label htmlFor="country" className="block text-sm font-medium mb-1">
             اختر البلد
           </label>
-          <Select value={country} onValueChange={val => setCountry(val as CountryCode)}>
-            <SelectTrigger className="w-full" aria-label="اختيار البلد">
-              <SelectValue
-                placeholder="اختر البلد"
-                className="flex flex-row-reverse items-center justify-between w-full text-right gap-2"
-                asChild
-              >
-                {country ? (
-                  <span className="flex flex-row-reverse items-center justify-between w-full gap-2">
-                    <span className="flex-1 text-right">
-                      {(() => {
-                        switch (country) {
-                          case 'USA': return 'أمريكا (دولار)';
-                          case 'EUR': return 'أوروبا (يورو)';
-                          case 'SAU': return 'السعودية (ريـال)';
-                          case 'UAE': return 'الإمارات (درهم)';
-                          case 'KWT': return 'الكويت (دينار)';
-                          case 'OMN': return 'عُمان (ريـال)';
-                          case 'QAT': return 'قطر (ريـال)';
-                          case 'TUR': return 'تركيا (ليرة)';
-                          case 'LBY': return 'ليبيا (دينار)';
-                          case 'IRQ': return 'العراق (دينار)';
-                          case 'EGY': return 'مصر (جنيه)';
-                          case 'JOR': return 'الأردن (دينار)';
-                          case 'LBN': return 'لبنان (ليرة)';
-                          case 'MAR': return 'المغرب (درهم)';
-                          case 'TUN': return 'تونس (دينار)';
-                          case 'ALG': return 'الجزائر (دينار)';
-                          default: return country;
-                        }
-                      })()}
+          {isMobile ? (
+            <Sheet open={countrySheetOpen} onOpenChange={setCountrySheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="outline" className="w-full justify-between">
+                  {countries.find(c => c.code === country)?.label || "اختر البلد"}
+                  <ChevronUpIcon />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="p-0">
+                <ul className="divide-y">
+                  {countries.map(c => (
+                    <li key={c.code}>
+                      <button
+                        className="w-full py-3 text-right px-4"
+                        onClick={() => {
+                          setCountry(c.code as CountryCode);
+                          setCountrySheetOpen(false);
+                        }}
+                      >
+                        {c.flag} {c.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <Select value={country} onValueChange={val => setCountry(val as CountryCode)}>
+              <SelectTrigger className="w-full" aria-label="اختيار البلد">
+                <SelectValue
+                  placeholder="اختر البلد"
+                  className="flex flex-row-reverse items-center justify-between w-full text-right gap-2"
+                  asChild
+                >
+                  {country ? (
+                    <span className="flex flex-row-reverse items-center justify-between w-full gap-2">
+                      <span className="flex-1 text-right">
+                        {countries.find(c => c.code === country)?.label}
+                      </span>
+                      <span className="text-xl ltr:ml-2 rtl:mr-2">{countryFlags[country]}</span>
                     </span>
-                    <span className="text-xl ltr:ml-2 rtl:mr-2">{countryFlags[country]}</span>
-                  </span>
-                ) : (
-                  <span className="flex-1 text-right">اختر البلد</span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USA">🇺🇸 أمريكا (دولار)</SelectItem>
-              <SelectItem value="EUR">🇪🇺 أوروبا (يورو)</SelectItem>
-              <SelectItem value="SAU">🇸🇦 السعودية (ريـال)</SelectItem>
-              <SelectItem value="UAE">🇦🇪 الإمارات (درهم)</SelectItem>
-              {/* Add more countries as needed */}
-            </SelectContent>
-          </Select>
+                  ) : (
+                    <span className="flex-1 text-right">اختر البلد</span>
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map(c => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.flag} {c.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
 
         {/* Price Abroad Input */}
