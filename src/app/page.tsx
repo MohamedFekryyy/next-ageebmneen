@@ -19,6 +19,8 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import PriceBreakdown from "@/components/PriceBreakdown";
 import { useHighValueGuard } from "@/lib/useHighValueGuard";
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Switch } from '@/components/ui/switch';
 
 // Exchange rates (EGP per unit, June 2025, approx)
 const rates = {
@@ -58,6 +60,9 @@ export default function Home() {
   const [onePhone, setOnePhone] = useState(true); // true = one phone (duty free)
   const [lastCustomsRate, setLastCustomsRate] = useState(38);
   const { checkHighValue } = useHighValueGuard();
+  const [mode, setMode] = useState<'phone' | 'laptop'>('phone');
+  const [caught, setCaught] = useState(false);
+  const [taxRate, setTaxRate] = useState(18);
 
   // Compute EGP value for priceAbroad
   const rate = rates[country].rate;
@@ -65,20 +70,22 @@ export default function Home() {
   const abroadRaw = parseFloat(priceAbroad) || 0;
   const priceInEGP = abroadRaw ? abroadRaw * rate : 0;
 
-  // --- New Legal Logic (June 2025) ---
-  // Always apply phone tax (18%)
-  const phoneTax = priceInEGP * 0.18;
-  // Customs (20%) only if price > 15,000 EGP and not one phone
-  const customs = (priceInEGP > 15000 && !onePhone) ? priceInEGP * 0.20 : 0;
-  // Total abroad price
-  const totalAbroad = priceInEGP + phoneTax + customs;
+  // Update calculation logic
+  const base = abroadRaw * rate;
+  const isCaught = caught;
+  const tax = isCaught ? base * (taxRate / 100) : 0;
+  let customs = 0;
+  if (mode === 'phone' && isCaught && !onePhone && base > 15000) {
+    customs = base * 0.20;
+  }
+  const totalAbroad = base + tax + customs;
 
   // Calculations for results
   const localPriceNum = parseFloat(localPrice) || 0;
 
   // Chart data (Arabic labels, new logic)
   const chartLabels = ['سعر في مصر', 'بره (ضريبة الموبايل فقط)', 'بره (ضريبة + جمارك)'];
-  const abroadTaxOnly = priceInEGP + phoneTax;
+  const abroadTaxOnly = base + tax;
   const abroadTaxCustoms = totalAbroad;
 
   // If customs is not applicable, grey out or hide the customs bar
@@ -146,6 +153,54 @@ export default function Home() {
       // Add more top padding on medium+ screens for better vertical spacing
       className={`p-4 max-w-md mx-auto w-full pt-4 md:pt-20 lg:pt-24 ${!allInputsFilled ? 'min-h-screen flex flex-col justify-center items-center' : ''}`}
     >
+      {/* Device Mode Toggle */}
+      <div className="flex justify-center mb-4">
+        <ToggleGroup type="single" value={mode} onValueChange={(val) => setMode(val as 'phone' | 'laptop')} aria-label="اختر نوع الجهاز">
+          <ToggleGroupItem value="phone" aria-label="موبايل">📱 موبايل</ToggleGroupItem>
+          <ToggleGroupItem value="laptop" aria-label="لابتوب">💻 لابتوب</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+
+      {/* Caught at Airport Switch */}
+      <div className="flex items-center justify-between mb-4">
+        <Label htmlFor="caught" className="text-sm font-medium">هيفتشوك في المطار؟</Label>
+        <Switch
+          id="caught"
+          checked={caught}
+          onCheckedChange={setCaught}
+          aria-label="هيفتشوك في المطار؟"
+        />
+      </div>
+
+      {/* Tax Rate Slider */}
+      {caught && (
+        <div className="mb-4">
+          <Label htmlFor="taxRate" className="text-sm font-medium">نسبة الضريبة (٪)</Label>
+          <Slider
+            id="taxRate"
+            value={[taxRate]}
+            min={10}
+            max={25}
+            step={1}
+            onValueChange={([val]) => setTaxRate(val)}
+            aria-label="نسبة الضريبة"
+          />
+        </div>
+      )}
+
+      {/* One Phone Only Switch (only in phone mode) */}
+      {mode === 'phone' && (
+        <div className="flex items-center justify-between mb-4">
+          <Label htmlFor="onePhone" className="text-sm font-medium">هاتف واحد فقط (معفي)</Label>
+          <Switch
+            id="onePhone"
+            checked={onePhone}
+            onCheckedChange={setOnePhone}
+            aria-label="هاتف واحد فقط (معفي)"
+          />
+        </div>
+      )}
+
       {/* Form: Country and Price Inputs */}
       <form className="space-y-3 w-full" aria-label="حاسبة مقارنة الأسعار">
         {/* Country Selector */}
@@ -264,56 +319,14 @@ export default function Home() {
             <CardTitle className="text-xl sm:text-2xl text-right">بيانات الشراء</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="mt-3 w-full">
-              <Label htmlFor="customsRate" className="flex items-center justify-between mb-1 text-sm font-medium">
-                <span>الجمارك ({customsRate}%)</span>
-                {/* Toggle for one phone exemption */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">هاتف واحد فقط (معفي)</span>
-                  {/* Replace below with <Switch> when implemented */}
-                  <input
-                    type="checkbox"
-                    id="onePhone"
-                    checked={onePhone}
-                    onChange={e => {
-                      const checked = e.target.checked;
-                      setOnePhone(checked);
-                      if (checked) {
-                        setLastCustomsRate(customsRate === 0 ? lastCustomsRate : customsRate);
-                        setCustomsRate(0);
-                      } else {
-                        setCustomsRate(lastCustomsRate || 38);
-                      }
-                    }}
-                    style={{ width: 32, height: 18 }}
-                  />
-                </div>
-              </Label>
-              {/* Helper text for customs rule */}
-              <div className="text-xs text-muted-foreground mb-2 text-right">
-                الجمارك بتتفعل لو السعر فوق ١٥ ألف ومعاك أكتر من موبايل.
-              </div>
-              <Slider
-                id="customsRate"
-                className="w-full"
-                value={[customsRate]}
-                min={0} max={100}
-                step={1}
-                onValueChange={([val]) => {
-                  setCustomsRate(val);
-                  if (val !== 0) setLastCustomsRate(val);
-                }}
-                disabled={onePhone}
-              />
-            </div>
             <div className="mt-4" style={{height: 220}}>
               {/* Add aria-label for accessibility */}
               <Bar data={chartData} options={chartOptions} plugins={[ChartDataLabels]} aria-label="مخطط مقارنة الأسعار" />
             </div>
             {/* Pass new props to PriceBreakdown */}
             <PriceBreakdown
-              foreignPriceEGP={priceInEGP}
-              phoneTax={phoneTax}
+              foreignPriceEGP={base}
+              phoneTax={tax}
               customs={customs}
               totalForeign={totalAbroad}
             />
