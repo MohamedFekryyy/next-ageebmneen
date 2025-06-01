@@ -59,7 +59,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
   // Card 1: نوع الجهاز
   // ... existing code ...
   return (
-    <form className="space-y-4" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
+    <form className="space-y-2.5 bg-zinc-100 rounded-xl p-2" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
       {/* Card 1 – نوع الجهاز */}
       <Card>
         <CardHeader>

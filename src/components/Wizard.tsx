@@ -29,7 +29,7 @@ export function Wizard() {
   const [step, setStep] = useState<WizardStep>('input');
   const [purchase, setPurchase] = useState<PurchaseState>(defaultState);
   return (
-    <div dir="rtl" className="max-w-md mx-auto p-4 space-y-4">
+    <div dir="rtl" className="max-w-md mx-auto sm:mt-16 p-4 space-y-4">
       <ProgressIndicator step={step} />
       {step === 'input' ? (
         <PurchaseForm
