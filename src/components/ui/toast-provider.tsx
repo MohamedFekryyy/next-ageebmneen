@@ -1,6 +1,6 @@
 'use client';
 import * as React from "react";
-import { Toast, ToastContext, ToastContextProps } from "./use-toast";
+import { Toast, ToastContext } from "./use-toast";
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<Toast[]>([]);

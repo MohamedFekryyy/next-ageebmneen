@@ -75,7 +75,6 @@ export default function Home() {
 
   // Calculations for results
   const localPriceNum = parseFloat(localPrice) || 0;
-  const diff = localPriceNum ? localPriceNum - totalAbroad : 0;
 
   // Chart data (Arabic labels, new logic)
   const chartLabels = ['سعر في مصر', 'بره (ضريبة الموبايل فقط)', 'بره (ضريبة + جمارك)'];
@@ -313,8 +312,6 @@ export default function Home() {
             </div>
             {/* Pass new props to PriceBreakdown */}
             <PriceBreakdown
-              countryCode={country as CountryCode}
-              foreignPrice={abroadRaw}
               foreignPriceEGP={priceInEGP}
               phoneTax={phoneTax}
               customs={customs}
