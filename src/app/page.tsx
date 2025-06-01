@@ -25,7 +25,7 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ChevronUpIcon } from 'lucide-react';
 import { useMediaQuery } from '@/lib/useMediaQuery';
-import { TooltipProvider, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip as ShadcnTooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 
 // Exchange rates (EGP per unit, June 2025, approx)
 const rates = {
@@ -304,7 +304,7 @@ export default function Home() {
         {/* Price Abroad Input */}
         <div className="w-full">
           <TooltipProvider>
-            <Tooltip>
+            <ShadcnTooltip>
               <TooltipTrigger asChild>
                 <label htmlFor="priceAbroad" className="block text-sm font-medium mb-1 truncate w-full" dir="rtl">
                   السعر بره
@@ -313,7 +313,7 @@ export default function Home() {
               <TooltipContent side="top">
                 السعر بره
               </TooltipContent>
-            </Tooltip>
+            </ShadcnTooltip>
           </TooltipProvider>
           <div className="relative flex flex-row-reverse items-center w-full">
             <Input
@@ -345,7 +345,7 @@ export default function Home() {
         {/* Local Price Input */}
         <div className="w-full">
           <TooltipProvider>
-            <Tooltip>
+            <ShadcnTooltip>
               <TooltipTrigger asChild>
                 <label htmlFor="localPrice" className="block text-sm font-medium mb-1 truncate w-full" dir="rtl">
                   السعر في مصر (جنيه)
@@ -354,7 +354,7 @@ export default function Home() {
               <TooltipContent side="top">
                 السعر في مصر (جنيه)
               </TooltipContent>
-            </Tooltip>
+            </ShadcnTooltip>
           </TooltipProvider>
           <div className="relative flex flex-row-reverse items-center w-full">
             <Input
