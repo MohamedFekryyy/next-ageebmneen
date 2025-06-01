@@ -25,7 +25,7 @@ const PriceBreakdown: React.FC<PriceBreakdownProps> = ({ foreignPriceEGP, phoneT
           <p>الجمارك ٢٠٪: {customs.toLocaleString("en-US")} جنيه</p>
         </div>
       ) : (
-        <div style={{ borderBottom: '1px dashed #ccc', paddingBottom: '8px', marginBottom: '8px' }}>
+        <div style={{ paddingBottom: '8px', marginBottom: '8px' }}>
           <p>الجمارك: معفى</p>
         </div>
       )}
