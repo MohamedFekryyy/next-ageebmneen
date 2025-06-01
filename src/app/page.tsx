@@ -220,21 +220,32 @@ export default function Home() {
             step={1}
             onValueChange={([val]) => setTaxRate(val)}
             aria-label="نسبة الضريبة"
+            className="h-10"
           />
         </div>
       )}
 
       {/* One Phone Only Switch (only in phone mode) */}
       {mode === 'phone' && (
-        <div className="flex items-center justify-between mb-4">
-          <Label htmlFor="onePhone" className="text-sm font-medium">هاتف واحد فقط (معفي)</Label>
-          <Switch
-            id="onePhone"
-            checked={onePhone}
-            onCheckedChange={setOnePhone}
-            aria-label="هاتف واحد فقط (معفي)"
-          />
-        </div>
+        <Card className="sticky top-0 z-20 bg-background/95 backdrop-blur mb-4">
+          <CardHeader>
+            <CardTitle className="text-base">الجمارك</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between mb-2">
+              <Label htmlFor="onePhone" className="text-sm font-medium">هاتف واحد فقط (معفي)</Label>
+              <Switch
+                id="onePhone"
+                checked={onePhone}
+                onCheckedChange={setOnePhone}
+                aria-label="هاتف واحد فقط (معفي)"
+              />
+            </div>
+            <div className="text-xs text-muted-foreground text-right">
+              الجمارك بتتفعل لو السعر فوق ١٥ ألف ومعاك أكتر من موبايل.
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Form: Country and Price Inputs */}
