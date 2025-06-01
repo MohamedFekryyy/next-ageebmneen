@@ -66,17 +66,19 @@ export function PurchaseForm({ value, onChange, onNext }: {
           <CardTitle className="text-base">نوع الجهاز</CardTitle>
         </CardHeader>
         <CardContent>
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            value={value.mode}
-            onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
-            aria-label="اختر نوع الجهاز"
-            className="w-full"
-          >
-            <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
-            <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
-          </ToggleGroup>
+          <div dir="ltr">
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              value={value.mode}
+              onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
+              aria-label="اختر نوع الجهاز"
+              className="w-full"
+            >
+              <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
+              <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
         </CardContent>
       </Card>
 
