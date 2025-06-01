@@ -121,6 +121,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif;
+    position: relative;
   }
 }
 
