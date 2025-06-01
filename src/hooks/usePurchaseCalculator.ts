@@ -1,5 +1,5 @@
 export interface PurchaseState {
-  mode: 'phone' | 'laptop';
+  mode?: 'phone' | 'laptop' | null;
   country: string;
   foreignPrice: number;
   localPrice: number;

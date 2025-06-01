@@ -23,7 +23,7 @@ function ProgressIndicator({ step }: { step: WizardStep }) {
 }
 
 const defaultState: PurchaseState = {
-  mode: 'phone',
+  mode: undefined,
   country: 'SAU',
   foreignPrice: 0,
   localPrice: 0,
