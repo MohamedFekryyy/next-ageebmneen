@@ -100,7 +100,7 @@ export default function AdminPage() {
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
                     <strong>ملاحظة:</strong> في بيئة الإنتاج، يتم حفظ السجلات في سجلات Vercel. 
-                    يمكنك الوصول إليها من لوحة تحكم Vercel تحت "Functions" → "View Function Logs" والبحث عن "SUBMISSION_LOG".
+                    يمكنك الوصول إليها من لوحة تحكم Vercel تحت &quot;Functions&quot; → &quot;View Function Logs&quot; والبحث عن &quot;SUBMISSION_LOG&quot;.
                   </p>
                 </div>
               )}
