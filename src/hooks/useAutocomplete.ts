@@ -48,7 +48,7 @@ export function useAutocomplete() {
         if (response.status === 429) {
           throw new Error('كثرة الطلبات، استنى شوية وحاول تاني');
         }
-        throw new Error('خطأ في جلب الاقتراحات');
+        throw new Error('خطأ في حساب الاقتراحات');
       }
 
       const data: AutocompleteResponse = await response.json();

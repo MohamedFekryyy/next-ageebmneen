@@ -85,13 +85,13 @@ export function useExchangeRates(): ExchangeRateHook {
       const response = await fetch('https://api.exchangerate-api.com/v4/latest/EGP');
       
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: فشل في جلب أسعار الصرف`);
+        throw new Error(`HTTP ${response.status}: فشل في حساب أسعار الصرف`);
       }
 
       const data: ExchangeRateResponse = await response.json();
       
       if (!data.success && data.success !== undefined) {
-        throw new Error('فشل في جلب أسعار الصرف من الخادم');
+        throw new Error('فشل في حساب أسعار الصرف من الخادم');
       }
 
       // Invert rates since we want to convert TO EGP, not FROM EGP
@@ -106,7 +106,7 @@ export function useExchangeRates(): ExchangeRateHook {
       
     } catch (err) {
       console.error('Exchange rate fetch error:', err);
-      setError(err instanceof Error ? err.message : 'خطأ في جلب أسعار الصرف');
+      setError(err instanceof Error ? err.message : 'خطأ في حساب أسعار الصرف');
       
       // Fallback to hardcoded rates if API fails
       const fallbackRates = {
