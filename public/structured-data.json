@@ -1,0 +1,70 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "مقارنة أسعار الموبايلات - أجيب منين؟",
+  "description": "مقارنة شاملة لأسعار الموبايلات في مصر والخارج مع حساب الجمارك والضرايب",
+  "url": "https://ageebmneen.vercel.app",
+  "numberOfItems": 10,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "url": "https://ageebmneen.vercel.app/compare/iphone-15-pro-max-256gb",
+      "name": "Iphone 15 Pro Max 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "url": "https://ageebmneen.vercel.app/compare/iphone-15-128gb",
+      "name": "Iphone 15 128gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "url": "https://ageebmneen.vercel.app/compare/iphone-14-128gb",
+      "name": "Iphone 14 128gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "url": "https://ageebmneen.vercel.app/compare/samsung-galaxy-s24-ultra-256gb",
+      "name": "Samsung Galaxy S24 Ultra 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "url": "https://ageebmneen.vercel.app/compare/samsung-galaxy-s23-256gb",
+      "name": "Samsung Galaxy S23 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "url": "https://ageebmneen.vercel.app/compare/xiaomi-14-ultra-512gb",
+      "name": "Xiaomi 14 Ultra 512gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "url": "https://ageebmneen.vercel.app/compare/xiaomi-redmi-note-13-pro-256gb",
+      "name": "Xiaomi Redmi Note 13 Pro 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "url": "https://ageebmneen.vercel.app/compare/google-pixel-8-pro-256gb",
+      "name": "Google Pixel 8 Pro 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "url": "https://ageebmneen.vercel.app/compare/oneplus-12-256gb",
+      "name": "Oneplus 12 256gb"
+    },
+    {
+      "@type": "ListItem",
+      "position": 10,
+      "url": "https://ageebmneen.vercel.app/compare/realme-c55-128gb",
+      "name": "Realme C55 128gb"
+    }
+  ]
+}

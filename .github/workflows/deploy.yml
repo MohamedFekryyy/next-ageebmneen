@@ -1,0 +1,50 @@
+name: Deploy with SEO Generation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'next-ageebmneen/package-lock.json'
+        
+    - name: Install dependencies
+      working-directory: ./next-ageebmneen
+      run: npm ci
+      
+    - name: Generate SEO files
+      working-directory: ./next-ageebmneen
+      run: npm run generate-seo
+      
+    - name: Build application
+      working-directory: ./next-ageebmneen
+      run: npm run build
+      
+    - name: Run tests (if any)
+      working-directory: ./next-ageebmneen
+      run: npm run lint
+      
+    - name: Commit generated SEO files
+      if: github.event_name == 'push'
+      working-directory: ./next-ageebmneen
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add public/sitemap.xml public/robots.txt public/structured-data.json
+        git diff --staged --quiet || git commit -m "Auto-update SEO files [skip ci]"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

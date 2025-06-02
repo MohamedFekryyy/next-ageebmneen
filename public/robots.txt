@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ageebmneen.vercel.app/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow all comparison pages
+Allow: /compare/
+
+# Block admin pages
+Disallow: /admin/
+Disallow: /api/
+
+# Block any temporary or development files
+Disallow: /_next/
+Disallow: /static/

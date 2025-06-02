@@ -1,0 +1,63 @@
+{
+  "name": "أجيب منين؟ – حساب تكلفة الموبايل",
+  "short_name": "أجيب منين؟",
+  "description": "احسب تكلفة شراء الموبايل من الخارج مقارنة بمصر مع الجمارك والضرايب",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["finance", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "/am-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "حساب سريع",
+      "short_name": "حساب",
+      "description": "ابدأ حساب تكلفة الموبايل مباشرة",
+      "url": "/?quick=true",
+      "icons": [
+        {
+          "src": "/am-logo.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ]
+} 
