@@ -10,9 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { ChevronDownIcon } from 'lucide-react';
+import { ChevronDownIcon, Search, Loader2 } from 'lucide-react';
 import { useHighValueGuard } from '@/lib/useHighValueGuard';
 import { useExchangeRates } from '@/hooks/useExchangeRates';
+import { useFetchPrice } from '@/hooks/useFetchPrice';
 import { LiveConversion } from '@/components/LiveConversion';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 
@@ -87,6 +88,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
   const { checkHighValue } = useHighValueGuard();
   const [countrySheetOpen, setCountrySheetOpen] = useState(false);
   const { rates: liveRates, isLoading: ratesLoading, error: ratesError } = useExchangeRates();
+  const { fetchPrice, isLoading: isSearching } = useFetchPrice();
 
   // Helper: update a single field
   function update<K extends keyof PurchaseState>(key: K, val: PurchaseState[K]) {
@@ -103,13 +105,29 @@ export function PurchaseForm({ value, onChange, onNext }: {
     return fallbackRates[countryCode]?.rate || 1;
   }
 
+  // Handle price search
+  const handlePriceSearch = async () => {
+    if (!value.deviceQuery.trim()) return;
+    
+    update('isSearching', true);
+    const result = await fetchPrice(value.country, value.deviceQuery);
+    
+    if (result !== null) {
+      update('foreignPrice', result.foreignPrice);
+      update('localPrice', result.localPrice);
+    }
+    
+    update('isSearching', false);
+  };
+
   // Derived values
   const rate = getExchangeRate(value.country);
   const currencyLabel = fallbackRates[value.country as keyof typeof fallbackRates]?.cur || "EGP";
   const convertedEGP = value.foreignPrice * rate;
 
-  // Required fields check
-  const requiredFilled = value.country && value.foreignPrice > 0 && value.localPrice > 0;
+  // Required fields check - for advanced mode, also need device query
+  const requiredFilled = value.country && value.foreignPrice > 0 && value.localPrice > 0 &&
+    (value.searchMode === 'manual' || (value.searchMode === 'advanced' && value.deviceQuery.trim()));
 
   return (
     <form className="space-y-2.5 overflow-visible" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
@@ -145,10 +163,39 @@ export function PurchaseForm({ value, onChange, onNext }: {
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="space-y-2.5"
           >
+            {/* Card 1.5 - Search Mode Toggle */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">الوضع</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div dir="ltr">
+                  <ToggleGroup
+                    type="single"
+                    variant="outline"
+                    value={value.searchMode}
+                    onValueChange={val => val && update('searchMode', val as 'manual' | 'advanced')}
+                    aria-label="اختر وضع الإدخال"
+                    className="w-full"
+                  >
+                    <ToggleGroupItem value="manual" aria-label="يدوي" className="flex-1">يدوي</ToggleGroupItem>
+                    <ToggleGroupItem value="advanced" aria-label="متقدم" className="flex-1">🔍 متقدّم</ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+                {value.searchMode === 'advanced' && (
+                  <p className="text-xs text-muted-foreground mt-2 text-center">
+                    البحث التلقائي عن أسعار الأجهزة من أمازون
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Card 2 – الدولة والسعر */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">الدولة والسعر</CardTitle>
+                <CardTitle className="text-base">
+                  {value.searchMode === 'advanced' ? 'البحث والسعر' : 'الدولة والسعر'}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {/* Country picker (bottom-sheet on mobile) */}
@@ -209,72 +256,159 @@ export function PurchaseForm({ value, onChange, onNext }: {
                     </Sheet>
                   </div>
                 </div>
-                {/* Foreign price input */}
-                <div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <label htmlFor="foreignPrice" className="block text-sm font-medium mb-1">السعر بره</label>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">سعر الجهاز في البلد المختارة</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <div className="relative flex flex-row-reverse items-center w-full">
-                    <Input
-                      id="foreignPrice"
-                      type="number"
-                      min={0}
-                      value={value.foreignPrice || ''}
-                      onChange={e => {
-                        const numVal = parseFloat(e.target.value) || 0;
-                        update('foreignPrice', numVal);
-                      }}
-                      placeholder="مثال: 800"
-                      className="text-right w-full pr-4 pl-[4ch]"
-                      inputMode="decimal"
-                      pattern="[0-9]*"
-                      aria-label="السعر بره"
-                    />
-                    <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">{currencyLabel}</span>
+
+                {/* Advanced Search: Device Query Input */}
+                {value.searchMode === 'advanced' && (
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <label htmlFor="deviceQuery" className="block text-sm font-medium mb-1">اسم الجهاز</label>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">اكتب اسم الجهاز للبحث عن سعره تلقائياً</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <div className="flex gap-2">
+                      <Input
+                        id="deviceQuery"
+                        type="text"
+                        value={value.deviceQuery}
+                        onChange={e => update('deviceQuery', e.target.value)}
+                        placeholder="مثال: iPhone 15 Pro Max 256GB"
+                        className="text-right flex-1"
+                        aria-label="اسم الجهاز"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handlePriceSearch}
+                        disabled={!value.deviceQuery.trim() || isSearching}
+                        className="px-3"
+                      >
+                        {isSearching ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Search className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                  
-                  {/* Live conversion display */}
-                  <LiveConversion
-                    foreignPrice={value.foreignPrice}
-                    exchangeRate={rate}
-                    isLoading={ratesLoading}
-                    error={ratesError}
-                  />
-                </div>
-                {/* Local price input */}
-                <div>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <label htmlFor="localPrice" className="block text-sm font-medium mb-1">السعر في مصر (جنيه)</label>
-                      </TooltipTrigger>
-                      <TooltipContent side="top">سعر الجهاز في السوق المحلي</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <div className="relative flex flex-row-reverse items-center w-full">
-                    <Input
-                      id="localPrice"
-                      type="number"
-                      min={0}
-                      value={value.localPrice || ''}
-                      onChange={e => {
-                        const numVal = parseFloat(e.target.value) || 0;
-                        update('localPrice', numVal);
-                      }}
-                      placeholder="مثال: 20000"
-                      className="text-right w-full pr-4 pl-[4ch]"
-                      inputMode="decimal"
-                      pattern="[0-9]*"
-                      aria-label="السعر في مصر"
+                )}
+
+                {/* Foreign price input - hidden in advanced mode or auto-filled */}
+                {value.searchMode === 'manual' && (
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <label htmlFor="foreignPrice" className="block text-sm font-medium mb-1">السعر بره</label>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">سعر الجهاز في البلد المختارة</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <div className="relative flex flex-row-reverse items-center w-full">
+                      <Input
+                        id="foreignPrice"
+                        type="number"
+                        min={0}
+                        value={value.foreignPrice || ''}
+                        onChange={e => {
+                          const numVal = parseFloat(e.target.value) || 0;
+                          update('foreignPrice', numVal);
+                        }}
+                        placeholder="مثال: 800"
+                        className="text-right w-full pr-4 pl-[4ch]"
+                        inputMode="decimal"
+                        pattern="[0-9]*"
+                        aria-label="السعر بره"
+                      />
+                      <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">{currencyLabel}</span>
+                    </div>
+                    
+                    {/* Live conversion display */}
+                    <LiveConversion
+                      foreignPrice={value.foreignPrice}
+                      exchangeRate={rate}
+                      isLoading={ratesLoading}
+                      error={ratesError}
                     />
-                    <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">EGP</span>
                   </div>
-                </div>
+                )}
+
+                {/* Advanced mode: Show fetched price (read-only) */}
+                {value.searchMode === 'advanced' && value.foreignPrice > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">السعر المُستخرج</label>
+                    <div className="relative flex flex-row-reverse items-center w-full">
+                      <Input
+                        type="text"
+                        value={`${value.foreignPrice.toLocaleString('en-US')} ${currencyLabel}`}
+                        readOnly
+                        className="text-right w-full bg-green-50 border-green-200"
+                        aria-label="السعر المُستخرج"
+                      />
+                    </div>
+                    
+                    {/* Live conversion display */}
+                    <LiveConversion
+                      foreignPrice={value.foreignPrice}
+                      exchangeRate={rate}
+                      isLoading={ratesLoading}
+                      error={ratesError}
+                    />
+                  </div>
+                )}
+
+                {/* Local price input - manual mode OR advanced mode with fetched price */}
+                {value.searchMode === 'manual' ? (
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <label htmlFor="localPrice" className="block text-sm font-medium mb-1">السعر في مصر (جنيه)</label>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">سعر الجهاز في السوق المحلي</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <div className="relative flex flex-row-reverse items-center w-full">
+                      <Input
+                        id="localPrice"
+                        type="number"
+                        min={0}
+                        value={value.localPrice || ''}
+                        onChange={e => {
+                          const numVal = parseFloat(e.target.value) || 0;
+                          update('localPrice', numVal);
+                        }}
+                        placeholder="مثال: 20000"
+                        className="text-right w-full pr-4 pl-[4ch]"
+                        inputMode="decimal"
+                        pattern="[0-9]*"
+                        aria-label="السعر في مصر"
+                      />
+                      <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">EGP</span>
+                    </div>
+                  </div>
+                ) : (
+                  /* Advanced mode: Show fetched Egyptian price (read-only) */
+                  value.localPrice > 0 && (
+                    <div>
+                      <label className="block text-sm font-medium mb-1">السعر في مصر (مُستخرج)</label>
+                      <div className="relative flex flex-row-reverse items-center w-full">
+                        <Input
+                          type="text"
+                          value={`${value.localPrice.toLocaleString('en-US')} EGP`}
+                          readOnly
+                          className="text-right w-full bg-blue-50 border-blue-200"
+                          aria-label="السعر في مصر المُستخرج"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        من مصادر محلية مصرية
+                      </p>
+                    </div>
+                  )
+                )}
               </CardContent>
             </Card>
 

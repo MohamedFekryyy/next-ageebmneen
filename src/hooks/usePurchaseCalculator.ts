@@ -6,6 +6,10 @@ export interface PurchaseState {
   caught: boolean;
   taxRate: number;
   onePhone: boolean;
+  // Advanced search fields
+  searchMode: 'manual' | 'advanced';
+  deviceQuery: string;
+  isSearching: boolean;
 }
 
 // Fallback exchange rates (EGP per unit)

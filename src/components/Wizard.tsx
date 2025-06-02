@@ -28,6 +28,10 @@ const defaultState: PurchaseState = {
   caught: true,
   taxRate: 18,
   onePhone: true,
+  // Advanced search fields
+  searchMode: 'manual',
+  deviceQuery: '',
+  isSearching: false,
 };
 
 function HeroSection({ deviceSelected, selectedMode, onReset }: { 
