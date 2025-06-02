@@ -29,15 +29,24 @@ const rates: Record<string, { rate: number }> = {
 
 export function usePurchaseCalculator(state: PurchaseState) {
   const fx = rates[state.country]?.rate || 1;
-  const base = state.foreignPrice * fx;
-  const tax = state.caught ? base * (state.taxRate / 100) : 0;
+  const base = Math.round(state.foreignPrice * fx);
+  
+  let tax = 0;
   let customs = 0;
-  if (
-    state.mode === 'phone' &&
-    state.caught &&
-    !state.onePhone &&
-    base > 15000
-  ) customs = base * 0.20;
-  const totalAbroad = base + tax + customs;
+  
+  if (state.caught) {
+    if (state.mode === 'phone') {
+      // Fixed 38.5% combined customs and tax rate for phones
+      // Apply to all imported phones (removing threshold and onePhone exemption for now)
+      customs = Math.round(base * 0.385);
+      tax = 0; // Already included in customs rate
+    } else if (state.mode === 'laptop') {
+      // Laptops only have VAT, no customs
+      tax = Math.round(base * (state.taxRate / 100));
+      customs = 0;
+    }
+  }
+  
+  const totalAbroad = Math.round(base + tax + customs);
   return { base, tax, customs, totalAbroad };
 } 

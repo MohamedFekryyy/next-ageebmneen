@@ -190,20 +190,20 @@ export function PurchaseForm({ value, onChange, onNext }: {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <label htmlFor="caught" className="text-sm font-medium">هيفتشوك في المطار؟</label>
+                      <label htmlFor="importing" className="text-sm font-medium">هتستورد {value.mode === 'phone' ? 'موبايل' : 'لابتوب'}؟</label>
                     </TooltipTrigger>
-                    <TooltipContent side="top">لو اتفتشت في المطار هتدفع ضريبة القيمة المضافة</TooltipContent>
+                    <TooltipContent side="top">{value.mode === 'phone' ? 'لو هتستورد موبايل هتدفع جمارك وضرايب 38.5%' : 'لو هتستورد لابتوب هتدفع ضريبة القيمة المضافة'}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <Switch
-                  id="caught"
+                  id="importing"
                   checked={value.caught}
                   onCheckedChange={val => update('caught', !!val)}
-                  aria-label="هيفتشوك في المطار؟"
+                  aria-label="هتستورد الجهاز؟"
                 />
               </div>
-              {/* VAT slider (if caught) */}
-              {value.caught && (
+              {/* VAT slider (only for laptops when importing) */}
+              {value.caught && value.mode === 'laptop' && (
                 <div className="mb-2">
                   <TooltipProvider>
                     <Tooltip>
@@ -224,6 +224,13 @@ export function PurchaseForm({ value, onChange, onNext }: {
                     className="h-10"
                   />
                   <div className="text-xs mt-1">{value.taxRate}%</div>
+                </div>
+              )}
+              {/* Fixed phone customs rate display */}
+              {value.caught && value.mode === 'phone' && (
+                <div className="mb-2 p-3 bg-blue-50 rounded-lg">
+                  <div className="text-sm font-medium text-blue-900">جمارك وضرايب الموبايلات</div>
+                  <div className="text-xs text-blue-700 mt-1">معدل ثابت: 38.5% (حسب القانون المصري)</div>
                 </div>
               )}
               {/* One phone only switch (phones only) */}

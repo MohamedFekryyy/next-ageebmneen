@@ -49,8 +49,8 @@ function HeroCard() {
           {/* Logo placeholder: replace with <Image src="/logo.png" ... /> if available */}
           <div className="h-14 w-14 rounded-full bg-zinc-200 flex items-center justify-center text-2xl font-bold">📱</div>
         </div>
-        <Image src="/am-logo.svg" alt="أجيب منين" height={56} width={200} className="h-14 w-auto" priority />
-        <CardDescription className="text-muted-foreground text-sm mt-1">
+        <Image src="/am-logo.svg" alt="أجيب منين" height={56} width={200} className="h-8 mx-auto w-auto" priority />
+        <CardDescription className="text-muted-foreground text-balance text-sm mt-1">
         احسب فرق السعر في ثانية وشوف أوفر لك تشتري من مصر ولا تشحنها معاك من برّه.
         </CardDescription>
       </CardHeader>

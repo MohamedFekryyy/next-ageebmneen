@@ -27,12 +27,14 @@ export function ResultScreen({ value, onBack }: {
   const localPrice = value.localPrice;
 
   // Chart data
-  const chartLabels = ['سعر في مصر', 'بره (ضريبة فقط)', 'بره (ضريبة + جمارك)'];
-  const abroadTaxOnly = base + tax;
+  const chartLabels = value.mode === 'phone' 
+    ? ['سعر في مصر', 'بره (بدون جمارك)', 'بره (مع جمارك وضرايب)']
+    : ['سعر في مصر', 'بره (بدون ضريبة)', 'بره (مع ضريبة)'];
+  const abroadTaxOnly = Math.round(base + tax);
   const abroadTaxCustoms = totalAbroad;
   const abroadVals: number[] = [localPrice, abroadTaxOnly, abroadTaxCustoms];
   let barColors: string[] = [];
-  let customsBarLabel = 'بره (ضريبة + جمارك)';
+  let customsBarLabel = value.mode === 'phone' ? 'بره (مع جمارك وضرايب)' : 'بره (مع ضريبة)';
   if (customs === 0) {
     abroadVals[2] = 0;
     barColors = abroadVals.map((v, i) => {
@@ -73,7 +75,7 @@ export function ResultScreen({ value, onBack }: {
       datalabels: {
         color: '#000',
         font: { weight: 'bold' as const },
-        formatter: (value: number) => value.toLocaleString('en-US') + ' ج.م',
+        formatter: (value: number) => Math.round(value).toLocaleString('en-US') + ' ج.م',
       },
       tooltip: { enabled: true },
     },
@@ -85,7 +87,7 @@ export function ResultScreen({ value, onBack }: {
 
   // Result alert
   const isCheaperAbroad = totalAbroad < localPrice;
-  const diff = Math.abs(totalAbroad - localPrice);
+  const diff = Math.round(Math.abs(totalAbroad - localPrice));
 
   return (
     <div className="space-y-4" dir="rtl">
@@ -109,6 +111,7 @@ export function ResultScreen({ value, onBack }: {
         phoneTax={tax}
         customs={customs}
         totalForeign={totalAbroad}
+        mode={value.mode || undefined}
       />
       {/* Horizontal Bar Chart */}
       <Card className="mt-2">
