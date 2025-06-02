@@ -35,24 +35,13 @@ export function ResultScreen({ value, onBack }: {
   const abroadVals: number[] = [localPrice, abroadTaxOnly, abroadTaxCustoms];
   let barColors: string[] = [];
   let customsBarLabel = value.mode === 'phone' ? 'بره (مع جمارك وضرايب)' : 'بره (مع ضريبة)';
-  if (customs === 0) {
-    abroadVals[2] = 0;
-    barColors = abroadVals.map((v, i) => {
-      if (i === 2) return '#cccccc';
-      const filtered = abroadVals.filter(val => val > 0);
-      const minVal = Math.min(...filtered);
-      const maxVal = Math.max(...filtered);
-      if (v === minVal) return '#4caf50';
-      if (v === maxVal) return '#ff9800';
-      return '#909090';
-    });
-    customsBarLabel += ' (غير مطبقة)';
-  } else {
-    const filtered = abroadVals.filter(val => val > 0);
-    const minVal = Math.min(...filtered);
-    const maxVal = Math.max(...filtered);
-    barColors = abroadVals.map(v => v === minVal ? '#4caf50' : v === maxVal ? '#ff9800' : '#909090');
-  }
+  
+  // Always show all bars since importing is always enabled
+  const filtered = abroadVals.filter(val => val > 0);
+  const minVal = Math.min(...filtered);
+  const maxVal = Math.max(...filtered);
+  barColors = abroadVals.map(v => v === minVal ? '#4caf50' : v === maxVal ? '#ff9800' : '#909090');
+  
   const chartData = {
     labels: [chartLabels[0], chartLabels[1], customsBarLabel],
     datasets: [
@@ -93,10 +82,10 @@ export function ResultScreen({ value, onBack }: {
     <div className="space-y-4" dir="rtl">
       <Button variant="ghost" onClick={onBack} className="mb-2">← رجوع</Button>
       {/* Result Alert */}
-      <Card className={`w-full ${isCheaperAbroad ? 'bg-green-100 text-green-800 border-green-300' : 'bg-orange-100 text-orange-800 border-orange-300'}`}>
+      <Card className={`w-full ${isCheaperAbroad ? 'bg-green-100 text-green-800 border-green-300' : 'bg-gradient-to-r from-red-200 via-white to-gray-300 text-gray-900 border-zinc-500/10'}`}>
         <CardHeader>
           <CardTitle className="text-base">
-            {isCheaperAbroad ? '✔️ أرخص تجيبه من بره!' : '⚠️ أرخص تشتريه من مصر!'}
+            {isCheaperAbroad ? '✔️ أرخص تجيبه من بره!' : '🇪🇬 أرخص تشتريه من مصر!'}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-sm">

@@ -7,6 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { useHighValueGuard } from '@/lib/useHighValueGuard';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
@@ -33,6 +34,25 @@ const rates: Record<string, { cur: string; rate: number }> = {
 
 const countryFlags: Record<string, string> = {
   SAU: "🇸🇦", UAE: "🇦🇪", EUR: "🇪🇺", USA: "🇺🇸", KWT: "🇰🇼", OMN: "🇴🇲", QAT: "🇶🇦", TUR: "🇹🇷", LBY: "🇱🇾", IRQ: "🇮🇶", EGY: "🇪🇬", JOR: "🇯🇴", LBN: "🇱🇧", MAR: "🇲🇦", TUN: "🇹🇳", ALG: "🇩🇿"
+};
+
+const countryNames: Record<string, string> = {
+  SAU: "السعودية",
+  UAE: "الإمارات",
+  EUR: "أوروبا",
+  USA: "أمريكا",
+  KWT: "الكويت",
+  OMN: "عُمان",
+  QAT: "قطر",
+  TUR: "تركيا",
+  LBY: "ليبيا",
+  IRQ: "العراق",
+  EGY: "مصر",
+  JOR: "الأردن",
+  LBN: "لبنان",
+  MAR: "المغرب",
+  TUN: "تونس",
+  ALG: "الجزائر"
 };
 
 export function PurchaseForm({ value, onChange, onNext }: {
@@ -66,19 +86,17 @@ export function PurchaseForm({ value, onChange, onNext }: {
           <CardTitle className="text-base">نوع الجهاز</CardTitle>
         </CardHeader>
         <CardContent>
-          <div dir="ltr">
-            <ToggleGroup
-              type="single"
-              variant="outline"
-              value={value.mode ?? ''}
-              onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
-              aria-label="اختر نوع الجهاز"
-              className="w-full"
-            >
-              <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
-              <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            value={value.mode ?? ''}
+            onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
+            aria-label="اختر نوع الجهاز"
+            className="w-full flex-row-reverse"
+          >
+            <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
+            <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
+          </ToggleGroup>
         </CardContent>
       </Card>
 
@@ -94,29 +112,60 @@ export function PurchaseForm({ value, onChange, onNext }: {
               {/* Country picker (bottom-sheet on mobile) */}
               <div>
                 <label htmlFor="country" className="block text-sm font-medium mb-1">اختر البلد</label>
-                <Sheet open={countrySheetOpen} onOpenChange={setCountrySheetOpen}>
-                  <SheetTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between" type="button">
-                      <span>{countryFlags[value.country]} {Object.entries(rates).find(([code]) => code === value.country)?.[0]}</span>
-                      <span className="text-xl">▼</span>
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="bottom" className="p-0">
-                    <ul className="divide-y">
+                
+                {/* Desktop Select (md and up) */}
+                <div className="hidden md:block">
+                  <Select value={value.country} onValueChange={val => update('country', val)}>
+                    <SelectTrigger className="w-full text-right" dir="rtl">
+                      <SelectValue placeholder="اختر البلد">
+                        {value.country && (
+                          <span className="flex items-center justify-end gap-2">
+                            <span>{countryNames[value.country]}</span>
+                            <span>{countryFlags[value.country]}</span>
+                          </span>
+                        )}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent dir="rtl" className="text-right">
                       {Object.entries(rates).map(([code]) => (
-                        <li key={code}>
-                          <button
-                            type="button"
-                            className="w-full py-3 text-right px-4"
-                            onClick={() => { update('country', code); setCountrySheetOpen(false); }}
-                          >
-                            {countryFlags[code]} {code}
-                          </button>
-                        </li>
+                        <SelectItem key={code} value={code} className="text-right flex-row-reverse">
+                          <span className="flex items-center justify-end gap-2 w-full">
+                            <span>{countryNames[code]}</span>
+                            <span>{countryFlags[code]}</span>
+                          </span>
+                        </SelectItem>
                       ))}
-                    </ul>
-                  </SheetContent>
-                </Sheet>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Mobile Sheet (below md) */}
+                <div className="block md:hidden">
+                  <Sheet open={countrySheetOpen} onOpenChange={setCountrySheetOpen}>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" className="w-full justify-between" type="button">
+                        <span>{countryFlags[value.country]} {countryNames[value.country]}</span>
+                        <span className="text-xl">▼</span>
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="bottom" className="p-0" dir="rtl">
+                      <ul className="divide-y">
+                        {Object.entries(rates).map(([code]) => (
+                          <li key={code}>
+                            <button
+                              type="button"
+                              className="w-full py-3 text-right px-4 flex items-center justify-end gap-2"
+                              onClick={() => { update('country', code); setCountrySheetOpen(false); }}
+                            >
+                              <span>{countryNames[code]}</span>
+                              <span>{countryFlags[code]}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </SheetContent>
+                  </Sheet>
+                </div>
               </div>
               {/* Foreign price input */}
               <div>
@@ -185,25 +234,8 @@ export function PurchaseForm({ value, onChange, onNext }: {
               <CardTitle className="text-base">الضرايب والجمارك</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {/* Caught at airport switch */}
-              <div className="flex items-center justify-between mb-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <label htmlFor="importing" className="text-sm font-medium">هتستورد {value.mode === 'phone' ? 'موبايل' : 'لابتوب'}؟</label>
-                    </TooltipTrigger>
-                    <TooltipContent side="top">{value.mode === 'phone' ? 'لو هتستورد موبايل هتدفع جمارك وضرايب 38.5%' : 'لو هتستورد لابتوب هتدفع ضريبة القيمة المضافة'}</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <Switch
-                  id="importing"
-                  checked={value.caught}
-                  onCheckedChange={val => update('caught', !!val)}
-                  aria-label="هتستورد الجهاز؟"
-                />
-              </div>
               {/* VAT slider (only for laptops when importing) */}
-              {value.caught && value.mode === 'laptop' && (
+              {value.mode === 'laptop' && (
                 <div className="mb-2">
                   <TooltipProvider>
                     <Tooltip>
@@ -227,7 +259,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                 </div>
               )}
               {/* Fixed phone customs rate display */}
-              {value.caught && value.mode === 'phone' && (
+              {value.mode === 'phone' && (
                 <div className="mb-2 p-3 bg-blue-50 rounded-lg">
                   <div className="text-sm font-medium text-blue-900">جمارك وضرايب الموبايلات</div>
                   <div className="text-xs text-blue-700 mt-1">معدل ثابت: 38.5% (حسب القانون المصري)</div>

@@ -22,7 +22,7 @@ const defaultState: PurchaseState = {
   country: 'SAU',
   foreignPrice: 0,
   localPrice: 0,
-  caught: false,
+  caught: true,
   taxRate: 18,
   onePhone: true,
 };
