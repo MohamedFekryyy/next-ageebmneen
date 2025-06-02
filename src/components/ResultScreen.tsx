@@ -18,9 +18,12 @@ import {
   Legend,
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ChartTooltip, Legend, ChartDataLabels);
+
+// Set global Chart.js font defaults
+ChartJS.defaults.font.family = "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif";
 
 export function ResultScreen({ value, onBack }: {
   value: PurchaseState;
@@ -29,6 +32,11 @@ export function ResultScreen({ value, onBack }: {
   const { rates: liveRates } = useExchangeRates();
   const { base, tax, customs, totalAbroad } = usePurchaseCalculator(value, liveRates);
   const localPrice = value.localPrice;
+
+  // Ensure font is applied to Chart.js
+  useEffect(() => {
+    ChartJS.defaults.font.family = "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif";
+  }, []);
 
   // Chart data
   const chartLabels = value.mode === 'phone' 
@@ -44,7 +52,20 @@ export function ResultScreen({ value, onBack }: {
   const filtered = abroadVals.filter(val => val > 0);
   const minVal = Math.min(...filtered);
   const maxVal = Math.max(...filtered);
-  barColors = abroadVals.map(v => v === minVal ? '#4caf50' : v === maxVal ? '#ff9800' : '#909090');
+  
+  // Use sophisticated Tailwind colors that work well together
+  const colors = {
+    cheapest: '#10b981',    // emerald-500 - for the cheapest option
+    expensive: '#f59e0b',   // amber-500 - for the most expensive option  
+    middle: '#6366f1',      // indigo-500 - for middle option
+    neutral: '#64748b'      // slate-500 - for neutral/equal values
+  };
+  
+  barColors = abroadVals.map(v => {
+    if (v === minVal) return colors.cheapest;
+    if (v === maxVal) return colors.expensive;
+    return colors.middle;
+  });
   
   const chartData = {
     labels: [chartLabels[0], chartLabels[1], customsBarLabel],
@@ -53,7 +74,29 @@ export function ResultScreen({ value, onBack }: {
         label: 'السعر بالجنيه',
         data: abroadVals,
         backgroundColor: barColors,
-        borderRadius: 6,
+        hoverBackgroundColor: barColors.map(color => {
+          // Create slightly darker hover colors
+          const colorMap: Record<string, string> = {
+            '#10b981': '#059669', // emerald-600
+            '#f59e0b': '#d97706', // amber-600
+            '#6366f1': '#4f46e5', // indigo-600
+            '#64748b': '#475569'  // slate-600
+          };
+          return colorMap[color] || color;
+        }),
+        borderColor: barColors.map(color => {
+          // Add subtle borders
+          const borderMap: Record<string, string> = {
+            '#10b981': '#047857', // emerald-700
+            '#f59e0b': '#b45309', // amber-700
+            '#6366f1': '#3730a3', // indigo-700
+            '#64748b': '#334155'  // slate-700
+          };
+          return borderMap[color] || color;
+        }),
+        borderWidth: 1,
+        borderRadius: 8,
+        borderSkipped: false,
       },
     ],
   };
@@ -62,19 +105,118 @@ export function ResultScreen({ value, onBack }: {
     responsive: true,
     maintainAspectRatio: false,
     locale: 'ar-EG',
+    font: {
+      family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+    },
+    animation: {
+      duration: 800,
+      easing: 'easeInOutQuart' as const,
+    },
+    interaction: {
+      intersect: false,
+      mode: 'index' as const,
+    },
     plugins: {
-      legend: { display: false },
-      title: { display: false },
-      datalabels: {
-        color: '#000',
-        font: { weight: 'bold' as const },
-        formatter: (value: number) => Math.round(value).toLocaleString('en-US') + ' ج.م',
+      legend: { 
+        display: false,
+        labels: {
+          font: {
+            family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+          }
+        }
       },
-      tooltip: { enabled: true },
+      title: { 
+        display: false,
+        font: {
+          family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+        }
+      },
+      datalabels: {
+        color: '#ffffff',
+        font: { 
+          weight: 'bold' as const,
+          family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+          size: 12,
+        },
+        formatter: (value: number) => Math.round(value).toLocaleString('en-US') + ' ج.م',
+        anchor: 'center' as const,
+        align: 'center' as const,
+        textStrokeColor: 'rgba(0,0,0,0.3)',
+        textStrokeWidth: 1,
+      },
+      tooltip: { 
+        enabled: true,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#ffffff',
+        bodyColor: '#ffffff',
+        borderColor: 'rgba(255, 255, 255, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 8,
+        titleFont: {
+          family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+          size: 14,
+          weight: 'bold' as const,
+        },
+        bodyFont: {
+          family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+          size: 12,
+        },
+        callbacks: {
+          label: function(context: { parsed: { x: number } }) {
+            return `${context.parsed.x.toLocaleString('en-US')} جنيه مصري`;
+          }
+        }
+      },
     },
     scales: {
-      x: { title: { display: true, text: 'السعر بالجنيه' }, beginAtZero: true },
-      y: { title: { display: false }, beginAtZero: true },
+      x: { 
+        title: { 
+          display: true, 
+          text: 'السعر بالجنيه',
+          font: {
+            family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+            size: 12,
+            weight: 'bold' as const,
+          },
+          color: '#64748b',
+        }, 
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(148, 163, 184, 0.1)',
+          lineWidth: 1,
+        },
+        ticks: {
+          font: {
+            family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+            size: 11,
+          },
+          color: '#64748b',
+          callback: function(value: string | number) {
+            return Number(value).toLocaleString('en-US');
+          }
+        }
+      },
+      y: { 
+        title: { 
+          display: false,
+          font: {
+            family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+          }
+        }, 
+        beginAtZero: true,
+        grid: {
+          display: false,
+        },
+        ticks: {
+          font: {
+            family: "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif",
+            size: 11,
+            weight: 500,
+          },
+          color: '#374151',
+          padding: 8,
+        }
+      },
     },
   };
 

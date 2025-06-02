@@ -60,7 +60,7 @@ export function SocialShare({
   };
 
   return (
-    <Card className="mt-2">
+    <Card className="mt-2 bg-zinc-200/50 shadow-none border-none">
       <CardHeader>
         <CardTitle className="text-base flex items-center gap-2">
           <Share2 className="w-4 h-4" />
