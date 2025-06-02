@@ -80,7 +80,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
   // Card 1: نوع الجهاز
   // ... existing code ...
   return (
-    <form className="space-y-2.5" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
+    <form className="space-y-2.5 overflow-visible" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
       {/* Card 1 – نوع الجهاز */}
       <Card>
         <CardHeader>
@@ -111,7 +111,6 @@ export function PurchaseForm({ value, onChange, onNext }: {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
             className="space-y-2.5"
           >
             {/* Card 2 – الدولة والسعر */}
@@ -239,64 +238,75 @@ export function PurchaseForm({ value, onChange, onNext }: {
               </CardContent>
             </Card>
 
-            {/* Card 3 – الضرايب والجمارك */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">الضرايب والجمارك</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* VAT slider (only for laptops when importing) */}
-                {value.mode === 'laptop' && (
-                  <div className="mb-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <label htmlFor="taxRate" className="text-sm font-medium">نسبة الضريبة (٪)</label>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">حدد نسبة الضريبة حسب الدولة</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Slider
-                      id="taxRate"
-                      value={[value.taxRate]}
-                      min={10}
-                      max={25}
-                      step={1}
-                      onValueChange={([val]) => update('taxRate', val)}
-                      aria-label="نسبة الضريبة"
-                      className="h-10"
-                    />
-                    <div className="text-xs mt-1">{value.taxRate}%</div>
-                  </div>
-                )}
-                {/* Fixed phone customs rate display */}
-                {value.mode === 'phone' && (
-                  <div className="mb-2 p-3 bg-blue-50 rounded-lg">
-                    <div className="text-sm font-medium text-blue-900">جمارك وضرايب الموبايلات</div>
-                    <div className="text-xs text-blue-700 mt-1">معدل ثابت: 38.5% (حسب القانون المصري)</div>
-                  </div>
-                )}
-                {/* One phone only switch (phones only) */}
-                {value.mode === 'phone' && (
-                  <div className="flex items-center justify-between mb-2" dir="ltr">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <label htmlFor="onePhone" className="text-sm font-medium" dir="rtl">موبايل واحد فقط؟</label>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">لو معاك موبايل واحد بس غالباً هتعدي من غير جمارك</TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Switch
-                      id="onePhone"
-                      checked={value.onePhone}
-                      onCheckedChange={val => update('onePhone', !!val)}
-                      aria-label="موبايل واحد فقط؟"
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Card 3 – الضرايب والجمارك (only show when all required fields are filled) */}
+            <AnimatePresence>
+              {requiredFilled && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                >
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">الضرايب والجمارك</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {/* VAT slider (only for laptops when importing) */}
+                      {value.mode === 'laptop' && (
+                        <div className="mb-2">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <label htmlFor="taxRate" className="text-sm font-medium">نسبة الضريبة (٪)</label>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">حدد نسبة الضريبة حسب الدولة</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <Slider
+                            id="taxRate"
+                            value={[value.taxRate]}
+                            min={10}
+                            max={25}
+                            step={1}
+                            onValueChange={([val]) => update('taxRate', val)}
+                            aria-label="نسبة الضريبة"
+                            className="h-10"
+                          />
+                          <div className="text-xs mt-1">{value.taxRate}%</div>
+                        </div>
+                      )}
+                      {/* Fixed phone customs rate display */}
+                      {value.mode === 'phone' && (
+                        <div className="mb-2 p-3 bg-blue-50 rounded-lg">
+                          <div className="text-sm font-medium text-blue-900">جمارك وضرايب الموبايلات</div>
+                          <div className="text-xs text-blue-700 mt-1">معدل ثابت: 38.5% (حسب القانون المصري)</div>
+                        </div>
+                      )}
+                      {/* One phone only switch (phones only) */}
+                      {value.mode === 'phone' && (
+                        <div className="flex items-center justify-between mb-2" dir="ltr">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <label htmlFor="onePhone" className="text-sm font-medium" dir="rtl">موبايل واحد فقط؟</label>
+                              </TooltipTrigger>
+                              <TooltipContent side="top">لو معاك موبايل واحد بس غالباً هتعدي من غير جمارك</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <Switch
+                            id="onePhone"
+                            checked={value.onePhone}
+                            onCheckedChange={val => update('onePhone', !!val)}
+                            aria-label="موبايل واحد فقط؟"
+                          />
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Next Button */}
             <Button
