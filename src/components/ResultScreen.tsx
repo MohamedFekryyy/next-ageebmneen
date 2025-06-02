@@ -124,7 +124,7 @@ export function ResultScreen({ value, onBack }: {
               <AccordionTrigger className="text-right">قانون الجمارك المصرية</AccordionTrigger>
               <AccordionContent className="text-right text-sm text-muted-foreground">
                 <p className="mb-2">
-                  <strong>مصلحة الجمارك المصرية:</strong> "يتم تطبيق رسوم جمركية بنسبة 38.5% على الهواتف المحمولة المستوردة اعتباراً من 1 يناير 2025"
+                  <strong>مصلحة الجمارك المصرية:</strong> &quot;يتم تطبيق رسوم جمركية بنسبة 38.5% على الهواتف المحمولة المستوردة اعتباراً من 1 يناير 2025&quot;
                 </p>
                 <p>
                   دي القوانين الجديدة اللي طبقتها الحكومة المصرية عشان تحمي الصناعة المحلية وتقلل الاستيراد العشوائي.
