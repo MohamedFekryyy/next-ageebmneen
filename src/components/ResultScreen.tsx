@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 import { usePurchaseCalculator } from '../hooks/usePurchaseCalculator';
 import { useExchangeRates } from '@/hooks/useExchangeRates';
+import { logSubmission, createSubmissionData } from '@/lib/analytics';
 import PriceBreakdown from './PriceBreakdown';
 import { SocialShare } from './SocialShare';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -61,6 +62,12 @@ export function ResultScreen({ value, onBack }: {
   useEffect(() => {
     ChartJS.defaults.font.family = "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif";
   }, []);
+
+  // Log submission data
+  useEffect(() => {
+    const submissionData = createSubmissionData(value, totalAbroad, localPrice);
+    logSubmission(submissionData);
+  }, [value, totalAbroad, localPrice]);
 
   // Chart data
   const chartLabels = value.mode === 'phone' 

@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 scratchpad.md
 /cursor
+
+# logs (user data)
+/logs
