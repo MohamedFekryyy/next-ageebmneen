@@ -2,7 +2,9 @@
 import { Button } from '@/components/ui/button';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 import { usePurchaseCalculator } from '../hooks/usePurchaseCalculator';
+import { useExchangeRates } from '@/hooks/useExchangeRates';
 import PriceBreakdown from './PriceBreakdown';
+import { SocialShare } from './SocialShare';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Bar } from 'react-chartjs-2';
@@ -24,7 +26,8 @@ export function ResultScreen({ value, onBack }: {
   value: PurchaseState;
   onBack: () => void;
 }) {
-  const { base, tax, customs, totalAbroad } = usePurchaseCalculator(value);
+  const { rates: liveRates } = useExchangeRates();
+  const { base, tax, customs, totalAbroad } = usePurchaseCalculator(value, liveRates);
   const localPrice = value.localPrice;
 
   // Chart data
@@ -112,6 +115,9 @@ export function ResultScreen({ value, onBack }: {
           <Bar data={chartData} options={chartOptions} plugins={[ChartDataLabels]} aria-label="مخطط مقارنة الأسعار" />
         </CardContent>
       </Card>
+      
+      {/* Social Share Component */}
+      <SocialShare />
       
       {/* Resources Accordion */}
       <Card className="mt-2 bg-transparent shadow-none border-none ">

@@ -11,10 +11,12 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { useHighValueGuard } from '@/lib/useHighValueGuard';
+import { useExchangeRates } from '@/hooks/useExchangeRates';
+import { LiveConversion } from '@/components/LiveConversion';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 
-// Exchange rates (EGP per unit)
-const rates: Record<string, { cur: string; rate: number }> = {
+// Fallback exchange rates (EGP per unit) - used if API fails
+const fallbackRates: Record<string, { cur: string; rate: number }> = {
   SAU: { cur: "SAR", rate: 13.33 },
   UAE: { cur: "AED", rate: 13.62 },
   EUR: { cur: "EUR", rate: 56.45 },
@@ -56,6 +58,26 @@ const countryNames: Record<string, string> = {
   ALG: "الجزائر"
 };
 
+// Map country codes to currency codes for API
+const currencyMap: Record<string, string> = {
+  SAU: "SAR",
+  UAE: "AED", 
+  EUR: "EUR",
+  USA: "USD",
+  KWT: "KWD",
+  OMN: "OMR",
+  QAT: "QAR",
+  TUR: "TRY",
+  LBY: "LYD",
+  IRQ: "IQD",
+  EGY: "EGP",
+  JOR: "JOD",
+  LBN: "LBP",
+  MAR: "MAD",
+  TUN: "TND",
+  ALG: "DZD"
+};
+
 export function PurchaseForm({ value, onChange, onNext }: {
   value: PurchaseState;
   onChange: (v: PurchaseState) => void;
@@ -63,22 +85,31 @@ export function PurchaseForm({ value, onChange, onNext }: {
 }) {
   const { checkHighValue } = useHighValueGuard();
   const [countrySheetOpen, setCountrySheetOpen] = useState(false);
+  const { rates: liveRates, isLoading: ratesLoading, error: ratesError } = useExchangeRates();
 
   // Helper: update a single field
   function update<K extends keyof PurchaseState>(key: K, val: PurchaseState[K]) {
     onChange({ ...value, [key]: val });
   }
 
+  // Get exchange rate (live or fallback)
+  function getExchangeRate(countryCode: string): number {
+    const currencyCode = currencyMap[countryCode];
+    if (liveRates && currencyCode && liveRates[currencyCode]) {
+      return liveRates[currencyCode];
+    }
+    // Fallback to hardcoded rates
+    return fallbackRates[countryCode]?.rate || 1;
+  }
+
   // Derived values
-  const rate = rates[value.country as keyof typeof rates]?.rate || 1;
-  const currencyLabel = rates[value.country as keyof typeof rates]?.cur || "EGP";
+  const rate = getExchangeRate(value.country);
+  const currencyLabel = fallbackRates[value.country as keyof typeof fallbackRates]?.cur || "EGP";
   const convertedEGP = value.foreignPrice * rate;
 
   // Required fields check
   const requiredFilled = value.country && value.foreignPrice > 0 && value.localPrice > 0;
 
-  // Card 1: نوع الجهاز
-  // ... existing code ...
   return (
     <form className="space-y-2.5 overflow-visible" dir="rtl" onSubmit={e => { e.preventDefault(); if (requiredFilled && !checkHighValue(convertedEGP)) onNext(); }}>
       {/* Card 1 – نوع الجهاز */}
@@ -96,8 +127,8 @@ export function PurchaseForm({ value, onChange, onNext }: {
               aria-label="اختر نوع الجهاز"
               className="w-full"
             >
-              <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
               <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
+              <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
             </ToggleGroup>
           </div>
         </CardContent>
@@ -137,7 +168,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent dir="rtl" className="text-right">
-                        {Object.entries(rates).map(([code]) => (
+                        {Object.entries(fallbackRates).map(([code]) => (
                           <SelectItem key={code} value={code} className="text-right flex-row-reverse">
                             <span className="flex items-center justify-end gap-2 w-full">
                               <span>{countryNames[code]}</span>
@@ -160,7 +191,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                       </SheetTrigger>
                       <SheetContent side="bottom" className="p-0" dir="rtl">
                         <ul className="divide-y">
-                          {Object.entries(rates).map(([code]) => (
+                          {Object.entries(fallbackRates).map(([code]) => (
                             <li key={code}>
                               <button
                                 type="button"
@@ -205,6 +236,14 @@ export function PurchaseForm({ value, onChange, onNext }: {
                     />
                     <span className="min-w-[3ch] px-2 text-muted-foreground absolute left-0 top-0 h-full flex items-center">{currencyLabel}</span>
                   </div>
+                  
+                  {/* Live conversion display */}
+                  <LiveConversion
+                    foreignPrice={value.foreignPrice}
+                    exchangeRate={rate}
+                    isLoading={ratesLoading}
+                    error={ratesError}
+                  />
                 </div>
                 {/* Local price input */}
                 <div>

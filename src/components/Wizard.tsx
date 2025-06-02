@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PurchaseForm } from './PurchaseForm';
 import { ResultScreen } from './ResultScreen';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
@@ -28,15 +29,29 @@ const defaultState: PurchaseState = {
   onePhone: true,
 };
 
-function HeroSection({ deviceSelected, onReset }: { deviceSelected: boolean; onReset?: () => void }) {
+function HeroSection({ deviceSelected, selectedMode, onReset }: { 
+  deviceSelected: boolean; 
+  selectedMode?: 'phone' | 'laptop';
+  onReset?: () => void;
+}) {
   return (
     <div className="mb-4">
-      <HeroCard deviceSelected={deviceSelected} onReset={onReset} />
+      <HeroCard deviceSelected={deviceSelected} selectedMode={selectedMode} onReset={onReset} />
     </div>
   );
 }
 
-function HeroCard({ deviceSelected, onReset }: { deviceSelected: boolean; onReset?: () => void }) {
+function HeroCard({ deviceSelected, selectedMode, onReset }: { 
+  deviceSelected: boolean; 
+  selectedMode?: 'phone' | 'laptop';
+  onReset?: () => void;
+}) {
+  const getDeviceIcon = () => {
+    if (selectedMode === 'phone') return '📱';
+    if (selectedMode === 'laptop') return '💻';
+    return '📱'; // default
+  };
+
   return (
     <Card className={`transition-all duration-200 ${deviceSelected ? 'text-center p-2' : 'text-center p-4'}`}>
       <CardHeader className="!px-2 !py-0 !items-center">
@@ -44,7 +59,19 @@ function HeroCard({ deviceSelected, onReset }: { deviceSelected: boolean; onRese
           // Compact horizontal layout when device is selected
           <div className="flex items-center !px-0 w-full justify-between">
             <div className="flex items-center justify-center gap-3">
-              <div className="h-8 w-8 rounded-full bg-zinc-200 flex items-center justify-center text-lg">📱</div>
+              <div className="h-8 w-8 rounded-full bg-zinc-200 flex items-center justify-center text-lg">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={selectedMode}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {getDeviceIcon()}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
               <Image src="/am-logo.svg" alt="أجيب منين" height={32} width={120} className="h-5 w-auto" priority />
             </div>
             <Button variant="ghost" size="sm" onClick={onReset} className="text-xs flex items-center gap-1">
@@ -78,7 +105,11 @@ export function Wizard() {
   
   return (
     <div dir="rtl" className={`max-w-md mx-auto p-4 space-y-4 ${noDeviceSelected ? 'md:min-h-screen md:flex md:flex-col md:justify-center' : ''} ${deviceSelected ? 'md:pt-20' : ''}`}>
-      <HeroSection deviceSelected={deviceSelected} onReset={() => setPurchase(defaultState)} />
+      <HeroSection 
+        deviceSelected={deviceSelected} 
+        selectedMode={purchase.mode || undefined}
+        onReset={() => setPurchase(defaultState)} 
+      />
       <ProgressIndicator step={step} />
       {step === 'input' ? (
         <PurchaseForm

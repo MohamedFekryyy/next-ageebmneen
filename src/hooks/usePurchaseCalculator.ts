@@ -8,7 +8,8 @@ export interface PurchaseState {
   onePhone: boolean;
 }
 
-const rates: Record<string, { rate: number }> = {
+// Fallback exchange rates (EGP per unit)
+const fallbackRates: Record<string, { rate: number }> = {
   SAU: { rate: 13.33 },
   UAE: { rate: 13.62 },
   EUR: { rate: 56.45 },
@@ -27,8 +28,41 @@ const rates: Record<string, { rate: number }> = {
   ALG: { rate: 0.37 },
 };
 
-export function usePurchaseCalculator(state: PurchaseState) {
-  const fx = rates[state.country]?.rate || 1;
+// Map country codes to currency codes
+const currencyMap: Record<string, string> = {
+  SAU: "SAR",
+  UAE: "AED", 
+  EUR: "EUR",
+  USA: "USD",
+  KWT: "KWD",
+  OMN: "OMR",
+  QAT: "QAR",
+  TUR: "TRY",
+  LBY: "LYD",
+  IRQ: "IQD",
+  EGY: "EGP",
+  JOR: "JOD",
+  LBN: "LBP",
+  MAR: "MAD",
+  TUN: "TND",
+  ALG: "DZD"
+};
+
+export function usePurchaseCalculator(
+  state: PurchaseState, 
+  liveRates?: Record<string, number> | null
+) {
+  // Get exchange rate (live or fallback)
+  function getExchangeRate(countryCode: string): number {
+    const currencyCode = currencyMap[countryCode];
+    if (liveRates && currencyCode && liveRates[currencyCode]) {
+      return liveRates[currencyCode];
+    }
+    // Fallback to hardcoded rates
+    return fallbackRates[countryCode]?.rate || 1;
+  }
+
+  const fx = getExchangeRate(state.country);
   const base = Math.round(state.foreignPrice * fx);
   
   let tax = 0;
