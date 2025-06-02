@@ -86,17 +86,19 @@ export function PurchaseForm({ value, onChange, onNext }: {
           <CardTitle className="text-base">نوع الجهاز</CardTitle>
         </CardHeader>
         <CardContent>
-          <ToggleGroup
-            type="single"
-            variant="outline"
-            value={value.mode ?? ''}
-            onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
-            aria-label="اختر نوع الجهاز"
-            className="w-full flex-row-reverse"
-          >
-            <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
-            <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
-          </ToggleGroup>
+          <div dir="ltr">
+            <ToggleGroup
+              type="single"
+              variant="outline"
+              value={value.mode ?? ''}
+              onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
+              aria-label="اختر نوع الجهاز"
+              className="w-full"
+            >
+              <ToggleGroupItem value="phone" aria-label="موبايل" className="flex-1">📱 موبايل</ToggleGroupItem>
+              <ToggleGroupItem value="laptop" aria-label="لابتوب" className="flex-1">💻 لابتوب</ToggleGroupItem>
+            </ToggleGroup>
+          </div>
         </CardContent>
       </Card>
 
@@ -267,11 +269,11 @@ export function PurchaseForm({ value, onChange, onNext }: {
               )}
               {/* One phone only switch (phones only) */}
               {value.mode === 'phone' && (
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2" dir="ltr">
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <label htmlFor="onePhone" className="text-sm font-medium">موبايل واحد فقط؟</label>
+                        <label htmlFor="onePhone" className="text-sm font-medium" dir="rtl">موبايل واحد فقط؟</label>
                       </TooltipTrigger>
                       <TooltipContent side="top">لو معاك موبايل واحد بس غالباً هتعدي من غير جمارك</TooltipContent>
                     </Tooltip>

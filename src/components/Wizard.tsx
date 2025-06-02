@@ -61,8 +61,12 @@ function HeroCard() {
 export function Wizard() {
   const [step, setStep] = useState<WizardStep>('input');
   const [purchase, setPurchase] = useState<PurchaseState>(defaultState);
+  
+  // Check if no device is selected for centering on desktop
+  const noDeviceSelected = step === 'input' && !purchase.mode;
+  
   return (
-    <div dir="rtl" className="max-w-md mx-auto p-4 space-y-4">
+    <div dir="rtl" className={`max-w-md mx-auto p-4 space-y-4 ${noDeviceSelected ? 'md:min-h-screen md:flex md:flex-col md:justify-center' : ''}`}>
       <HeroSection />
       <ProgressIndicator step={step} />
       {step === 'input' ? (
