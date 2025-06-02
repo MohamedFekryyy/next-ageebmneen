@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
-import { ChevronDownIcon, Search, Loader2 } from 'lucide-react';
+import { ChevronDownIcon, Loader2 } from 'lucide-react';
 import { useHighValueGuard } from '@/lib/useHighValueGuard';
 import { useExchangeRates } from '@/hooks/useExchangeRates';
 import { useFetchPrice } from '@/hooks/useFetchPrice';
+import { AutocompleteDropdown } from '@/components/AutocompleteDropdown';
 import { LiveConversion } from '@/components/LiveConversion';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 
@@ -80,6 +81,9 @@ const currencyMap: Record<string, string> = {
   ALG: "DZD"
 };
 
+// Countries that don't have Amazon marketplaces - use UAE with international shipping
+const PROXY_COUNTRIES = ['KWT', 'QAT', 'OMN', 'JOR', 'LBN'];
+
 export function PurchaseForm({ value, onChange, onNext }: {
   value: PurchaseState;
   onChange: (v: PurchaseState) => void;
@@ -105,19 +109,42 @@ export function PurchaseForm({ value, onChange, onNext }: {
     return fallbackRates[countryCode]?.rate || 1;
   }
 
-  // Handle price search
-  const handlePriceSearch = async () => {
-    if (!value.deviceQuery.trim()) return;
+  // Handle autocomplete suggestion selection
+  const handleSuggestionSelect = async (suggestion: {
+    id: string;
+    title: string;
+    description?: string;
+    image?: string | null;
+    brand?: string;
+    category?: string;
+  }) => {
+    // Update the device query with the selected suggestion
+    update('deviceQuery', suggestion.title);
     
-    update('isSearching', true);
-    const result = await fetchPrice(value.country, value.deviceQuery);
-    
-    if (result !== null) {
-      update('foreignPrice', result.foreignPrice);
-      update('localPrice', result.localPrice);
+    // Automatically trigger price search for the selected product
+    if (value.country && suggestion.title) {
+      update('isSearching', true);
+      const result = await fetchPrice(value.country, suggestion.title);
+      
+      if (result !== null) {
+        update('foreignPrice', result.foreignPrice);
+        update('localPrice', result.localPrice);
+        
+        // Run high-value guard after API fill
+        const convertedEGP = result.foreignPrice * getExchangeRate(value.country);
+        const isHighValue = checkHighValue(convertedEGP);
+        
+        // Auto-advance if all fields are valid and not high value
+        if (!isHighValue && value.mode) {
+          // Small delay to let user see the fetched prices
+          setTimeout(() => {
+            onNext();
+          }, 1500);
+        }
+      }
+      
+      update('isSearching', false);
     }
-    
-    update('isSearching', false);
   };
 
   // Derived values
@@ -184,7 +211,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                 </div>
                 {value.searchMode === 'advanced' && (
                   <p className="text-xs text-muted-foreground mt-2 text-center">
-                    البحث التلقائي عن أسعار الأجهزة من أمازون
+                    البحث التلقائي عن أسعار الأجهزة مع اقتراحات ذكية
                   </p>
                 )}
               </CardContent>
@@ -257,7 +284,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                   </div>
                 </div>
 
-                {/* Advanced Search: Device Query Input */}
+                {/* Advanced Search: Enhanced Autocomplete Input */}
                 {value.searchMode === 'advanced' && (
                   <div>
                     <TooltipProvider>
@@ -265,32 +292,62 @@ export function PurchaseForm({ value, onChange, onNext }: {
                         <TooltipTrigger asChild>
                           <label htmlFor="deviceQuery" className="block text-sm font-medium mb-1">اسم الجهاز</label>
                         </TooltipTrigger>
-                        <TooltipContent side="top">اكتب اسم الجهاز للبحث عن سعره تلقائياً</TooltipContent>
+                        <TooltipContent side="top">ابحث عن جهازك واختر من الاقتراحات أو اكتب اسم المنتج مباشرة</TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="flex gap-2">
-                      <Input
-                        id="deviceQuery"
-                        type="text"
+                    
+                    <div className="space-y-3">
+                      <AutocompleteDropdown
                         value={value.deviceQuery}
-                        onChange={e => update('deviceQuery', e.target.value)}
+                        onChange={(newValue: string) => update('deviceQuery', newValue)}
+                        onSelect={handleSuggestionSelect}
                         placeholder="مثال: iPhone 15 Pro Max 256GB"
-                        className="text-right flex-1"
-                        aria-label="اسم الجهاز"
+                        disabled={isSearching}
                       />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handlePriceSearch}
-                        disabled={!value.deviceQuery.trim() || isSearching}
-                        className="px-3"
-                      >
-                        {isSearching ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Search className="h-4 w-4" />
-                        )}
-                      </Button>
+                      
+                      {/* Manual Search Button */}
+                      {value.deviceQuery.trim() && !value.foreignPrice && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={async () => {
+                            if (!value.deviceQuery.trim() || !value.country) return;
+                            
+                            update('isSearching', true);
+                            const result = await fetchPrice(value.country, value.deviceQuery);
+                            
+                            if (result !== null) {
+                              update('foreignPrice', result.foreignPrice);
+                              update('localPrice', result.localPrice);
+                              
+                              // Run high-value guard after API fill
+                              const convertedEGP = result.foreignPrice * getExchangeRate(value.country);
+                              const isHighValue = checkHighValue(convertedEGP);
+                              
+                              // Auto-advance if all fields are valid and not high value
+                              if (!isHighValue && value.mode) {
+                                // Small delay to let user see the fetched prices
+                                setTimeout(() => {
+                                  onNext();
+                                }, 1500);
+                              }
+                            }
+                            
+                            update('isSearching', false);
+                          }}
+                          disabled={!value.deviceQuery.trim() || !value.country || isSearching}
+                          className="w-full"
+                        >
+                          {isSearching ? (
+                            <>
+                              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                              🔍 جاري البحث في أمازون...
+                            </>
+                          ) : (
+                            '🔍 ابحث عن السعر'
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -338,15 +395,27 @@ export function PurchaseForm({ value, onChange, onNext }: {
                 {/* Advanced mode: Show fetched price (read-only) */}
                 {value.searchMode === 'advanced' && value.foreignPrice > 0 && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">السعر المُستخرج</label>
+                    <label className="block text-sm font-medium mb-1">السعر من أمازون</label>
                     <div className="relative flex flex-row-reverse items-center w-full">
                       <Input
                         type="text"
                         value={`${value.foreignPrice.toLocaleString('en-US')} ${currencyLabel}`}
                         readOnly
                         className="text-right w-full bg-green-50 border-green-200"
-                        aria-label="السعر المُستخرج"
+                        aria-label="السعر المُستخرج من أمازون"
                       />
+                    </div>
+                    
+                    {/* Amazon-specific details */}
+                    <div className="mt-2 space-y-1">
+                      <p className="text-xs text-green-700 flex items-center gap-1">
+                        ✅ تم جلب السعر من أمازون مباشرة
+                      </p>
+                      {PROXY_COUNTRIES.includes(value.country) && (
+                        <p className="text-xs text-blue-600">
+                          📦 شحن دولي من الإمارات
+                        </p>
+                      )}
                     </div>
                     
                     {/* Live conversion display */}
@@ -393,7 +462,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
                   /* Advanced mode: Show fetched Egyptian price (read-only) */
                   value.localPrice > 0 && (
                     <div>
-                      <label className="block text-sm font-medium mb-1">السعر في مصر (مُستخرج)</label>
+                      <label className="block text-sm font-medium mb-1">السعر في مصر</label>
                       <div className="relative flex flex-row-reverse items-center w-full">
                         <Input
                           type="text"
@@ -403,9 +472,13 @@ export function PurchaseForm({ value, onChange, onNext }: {
                           aria-label="السعر في مصر المُستخرج"
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        من مصادر محلية مصرية
-                      </p>
+                      
+                      {/* Egyptian price source details */}
+                      <div className="mt-2 space-y-1">
+                        <p className="text-xs text-blue-700 flex items-center gap-1">
+                          🇪🇬 من مصادر محلية مصرية
+                        </p>
+                      </div>
                     </div>
                   )
                 )}
@@ -487,10 +560,17 @@ export function PurchaseForm({ value, onChange, onNext }: {
               type="submit"
               variant="default"
               className="mt-4 w-full min-h-[44px] text-base"
-              disabled={!requiredFilled}
-              aria-disabled={!requiredFilled}
+              disabled={!requiredFilled || isSearching}
+              aria-disabled={!requiredFilled || isSearching}
             >
-              التالي
+              {isSearching ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  جاري البحث...
+                </>
+              ) : (
+                'التالي'
+              )}
             </Button>
           </motion.div>
         )}

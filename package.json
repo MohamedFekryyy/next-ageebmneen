@@ -25,6 +25,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@shadcn/ui": "^0.0.4",
+    "aws4": "^1.13.2",
     "chart.js": "^4.4.9",
     "chartjs-plugin-datalabels": "^2.2.0",
     "class-variance-authority": "^0.7.1",
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/aws4": "^1.11.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
