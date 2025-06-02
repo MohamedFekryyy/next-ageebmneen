@@ -10,7 +10,7 @@ type PriceBreakdownProps = {
 };
 
 const PriceBreakdown: React.FC<PriceBreakdownProps> = ({ foreignPriceEGP, phoneTax, customs, totalForeign, mode }) => (
-  <Card className="bg-muted/20 text-sm mt-2">
+  <Card className="bg-white text-sm mt-2">
     <CardHeader>
       <CardTitle>تفاصيل السعر</CardTitle>
     </CardHeader>
