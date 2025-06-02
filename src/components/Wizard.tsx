@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PurchaseForm } from './PurchaseForm';
 import { ResultScreen } from './ResultScreen';
+import { ExamplesShowcase } from './ExamplesShowcase';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 import { Card, CardHeader, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -103,20 +104,33 @@ export function Wizard() {
   const noDeviceSelected = step === 'input' && !purchase.mode;
   const deviceSelected = step === 'input' && !!purchase.mode;
   
+  const handleReset = () => {
+    setPurchase(defaultState);
+    setStep('input');
+  };
+  
   return (
     <div dir="rtl" className={`max-w-md mx-auto p-4 space-y-4 ${noDeviceSelected ? 'md:min-h-screen md:flex md:flex-col md:justify-center' : ''} ${deviceSelected ? 'md:pt-20' : ''}`}>
       <HeroSection 
         deviceSelected={deviceSelected} 
         selectedMode={purchase.mode || undefined}
-        onReset={() => setPurchase(defaultState)} 
+        onReset={handleReset} 
       />
       <ProgressIndicator step={step} />
       {step === 'input' ? (
-        <PurchaseForm
-          value={purchase}
-          onChange={setPurchase}
-          onNext={() => setStep('result')}
-        />
+        <>
+          <PurchaseForm
+            value={purchase}
+            onChange={setPurchase}
+            onNext={() => setStep('result')}
+          />
+          {/* Show examples when no device is selected */}
+          {!purchase.mode && (
+            <div className="mt-6">
+              <ExamplesShowcase onStartCalculation={handleReset} />
+            </div>
+          )}
+        </>
       ) : (
         <ResultScreen
           value={purchase}
