@@ -3,13 +3,8 @@ import { useState, useEffect } from 'react';
 import { PurchaseForm } from './PurchaseForm';
 import { ResultScreen } from './ResultScreen';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-// If Framer Motion is available, import it:
-let motion: any, useScroll: any, useTransform: any;
-try {
-  // @ts-ignore
-  ({ motion, useScroll, useTransform } = require('framer-motion'));
-} catch {}
+import { Card, CardHeader, CardDescription } from '@/components/ui/card';
+import Image from 'next/image';
 
 export type WizardStep = 'input' | 'result';
 
@@ -33,19 +28,6 @@ const defaultState: PurchaseState = {
 };
 
 function HeroSection() {
-  // Collapsing/fading on scroll (Framer Motion if available, else fallback)
-  if (motion && useScroll && useTransform) {
-    const { scrollY } = useScroll();
-    // Fade out between 0 and 100px scroll
-    const opacity = useTransform(scrollY, [0, 100], [1, 0]);
-    const scale = useTransform(scrollY, [0, 100], [1, 0.95]);
-    return (
-      <motion.div style={{ opacity, scale }} className="mb-4">
-        <HeroCard />
-      </motion.div>
-    );
-  }
-  // Fallback: hide on scroll past 80px
   const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 80);
@@ -67,7 +49,7 @@ function HeroCard() {
           {/* Logo placeholder: replace with <Image src="/logo.png" ... /> if available */}
           <div className="h-14 w-14 rounded-full bg-zinc-200 flex items-center justify-center text-2xl font-bold">📱</div>
         </div>
-        <CardTitle className="text-2xl font-bold">أجيب منين</CardTitle>
+        <Image src="/am-logo.svg" alt="أجيب منين" height={56} width={200} className="h-14 w-auto" priority />
         <CardDescription className="text-muted-foreground text-sm mt-1">
         احسب فرق السعر في ثانية وشوف أوفر لك تشتري من مصر ولا تشحنها معاك من برّه.
         </CardDescription>

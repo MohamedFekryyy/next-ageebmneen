@@ -70,7 +70,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
             <ToggleGroup
               type="single"
               variant="outline"
-              value={value.mode}
+              value={value.mode ?? ''}
               onValueChange={val => val && update('mode', val as 'phone' | 'laptop')}
               aria-label="اختر نوع الجهاز"
               className="w-full"
