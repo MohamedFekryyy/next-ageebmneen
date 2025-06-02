@@ -115,17 +115,17 @@ export function PopularLinks() {
   };
 
   return (
-    <div className="bg-white py-8 px-4" dir="rtl">
+    <div className="py-8 px-4" dir="rtl">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">مقارنات شائعة</h2>
           <p className="text-gray-600">اكتشف أسعار أشهر الموبايلات في مصر والخارج</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {popularLinks.map((link, index) => (
             <Link key={index} href={link.href}>
-              <Card className={`h-full transition-all duration-200 cursor-pointer ${getCategoryColor(link.category)}`}>
+              <Card className={`h-full transition-all !p-0 duration-200 cursor-pointer ${getCategoryColor(link.category)}`}>
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 mt-1">

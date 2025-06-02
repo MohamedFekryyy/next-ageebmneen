@@ -14,7 +14,14 @@ export async function POST(request: NextRequest) {
       ...data
     };
 
-    // Define log file path
+    // In production (Vercel), use console.log for now
+    // This will be visible in Vercel function logs
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+      console.log('SUBMISSION_LOG:', JSON.stringify(logEntry));
+      return NextResponse.json({ success: true, method: 'console' });
+    }
+
+    // For local development, use file system
     const logDir = path.join(process.cwd(), 'logs');
     const logFile = path.join(logDir, 'submissions.json');
 
@@ -45,7 +52,7 @@ export async function POST(request: NextRequest) {
     // Write back to file
     fs.writeFileSync(logFile, JSON.stringify(logs, null, 2));
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, method: 'file' });
   } catch (error) {
     console.error('Error logging submission:', error);
     return NextResponse.json({ error: 'Failed to log submission' }, { status: 500 });
