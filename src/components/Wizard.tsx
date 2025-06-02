@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PurchaseForm } from './PurchaseForm';
 import { ResultScreen } from './ResultScreen';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
@@ -29,12 +29,6 @@ const defaultState: PurchaseState = {
 };
 
 function HeroSection({ deviceSelected, onReset }: { deviceSelected: boolean; onReset?: () => void }) {
-  const [collapsed, setCollapsed] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setCollapsed(window.scrollY > 80);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
   return (
     <div className="mb-4">
       <HeroCard deviceSelected={deviceSelected} onReset={onReset} />
@@ -83,7 +77,7 @@ export function Wizard() {
   const deviceSelected = step === 'input' && !!purchase.mode;
   
   return (
-    <div dir="rtl" className={`max-w-md mx-auto p-4 space-y-4 ${noDeviceSelected ? 'md:min-h-screen md:flex md:flex-col md:justify-center' : ''}`}>
+    <div dir="rtl" className={`max-w-md mx-auto p-4 space-y-4 ${noDeviceSelected ? 'md:min-h-screen md:flex md:flex-col md:justify-center' : ''} ${deviceSelected ? 'md:pt-20' : ''}`}>
       <HeroSection deviceSelected={deviceSelected} onReset={() => setPurchase(defaultState)} />
       <ProgressIndicator step={step} />
       {step === 'input' ? (

@@ -34,7 +34,7 @@ export function ResultScreen({ value, onBack }: {
   const abroadTaxCustoms = totalAbroad;
   const abroadVals: number[] = [localPrice, abroadTaxOnly, abroadTaxCustoms];
   let barColors: string[] = [];
-  let customsBarLabel = value.mode === 'phone' ? 'بره (مع جمارك وضرايب)' : 'بره (مع ضريبة)';
+  const customsBarLabel = value.mode === 'phone' ? 'بره (مع جمارك وضرايب)' : 'بره (مع ضريبة)';
   
   // Always show all bars since importing is always enabled
   const filtered = abroadVals.filter(val => val > 0);
