@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
+import { ChevronDownIcon } from 'lucide-react';
 import { useHighValueGuard } from '@/lib/useHighValueGuard';
 import { useExchangeRates } from '@/hooks/useExchangeRates';
 import { LiveConversion } from '@/components/LiveConversion';
@@ -186,10 +187,10 @@ export function PurchaseForm({ value, onChange, onNext }: {
                       <SheetTrigger asChild>
                         <Button variant="outline" className="w-full justify-between" type="button">
                           <span>{countryFlags[value.country]} {countryNames[value.country]}</span>
-                          <span className="text-xl">▼</span>
+                          <ChevronDownIcon className="size-4 opacity-50" />
                         </Button>
                       </SheetTrigger>
-                      <SheetContent side="bottom" className="p-0" dir="rtl">
+                      <SheetContent side="bottom" className="p-0 max-h-[95vh] overflow-y-auto" dir="rtl">
                         <ul className="divide-y">
                           {Object.entries(fallbackRates).map(([code]) => (
                             <li key={code}>
