@@ -25,6 +25,30 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, ChartTooltip, Le
 // Set global Chart.js font defaults
 ChartJS.defaults.font.family = "'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Kanit', sans-serif";
 
+// Country mappings
+const countryFlags: Record<string, string> = {
+  SAU: "🇸🇦", UAE: "🇦🇪", EUR: "🇪🇺", USA: "🇺🇸", KWT: "🇰🇼", OMN: "🇴🇲", QAT: "🇶🇦", TUR: "🇹🇷", LBY: "🇱🇾", IRQ: "🇮🇶", EGY: "🇪🇬", JOR: "🇯🇴", LBN: "🇱🇧", MAR: "🇲🇦", TUN: "🇹🇳", ALG: "🇩🇿"
+};
+
+const countryNames: Record<string, string> = {
+  SAU: "السعودية",
+  UAE: "الإمارات",
+  EUR: "أوروبا",
+  USA: "أمريكا",
+  KWT: "الكويت",
+  OMN: "عُمان",
+  QAT: "قطر",
+  TUR: "تركيا",
+  LBY: "ليبيا",
+  IRQ: "العراق",
+  EGY: "مصر",
+  JOR: "الأردن",
+  LBN: "لبنان",
+  MAR: "المغرب",
+  TUN: "تونس",
+  ALG: "الجزائر"
+};
+
 export function ResultScreen({ value, onBack }: {
   value: PurchaseState;
   onBack: () => void;
@@ -43,8 +67,8 @@ export function ResultScreen({ value, onBack }: {
     ? ['سعر في مصر', 'بره (بدون جمارك)', 'بره (مع جمارك وضرايب)']
     : ['سعر في مصر', 'بره (بدون ضريبة)', 'بره (مع ضريبة)'];
   const abroadTaxOnly = Math.round(base + tax);
-  const abroadTaxCustoms = totalAbroad;
-  const abroadVals: number[] = [localPrice, abroadTaxOnly, abroadTaxCustoms];
+  const abroadTaxCustoms = Math.round(totalAbroad);
+  const abroadVals: number[] = [Math.round(localPrice), abroadTaxOnly, abroadTaxCustoms];
   let barColors: string[] = [];
   const customsBarLabel = value.mode === 'phone' ? 'بره (مع جمارك وضرايب)' : 'بره (مع ضريبة)';
   
@@ -163,7 +187,7 @@ export function ResultScreen({ value, onBack }: {
         },
         callbacks: {
           label: function(context: { parsed: { x: number } }) {
-            return `${context.parsed.x.toLocaleString('en-US')} جنيه مصري`;
+            return `${Math.round(context.parsed.x).toLocaleString('en-US')} جنيه مصري`;
           }
         }
       },
@@ -192,7 +216,7 @@ export function ResultScreen({ value, onBack }: {
           },
           color: '#64748b',
           callback: function(value: string | number) {
-            return Number(value).toLocaleString('en-US');
+            return Math.round(Number(value)).toLocaleString('en-US');
           }
         }
       },
@@ -222,7 +246,11 @@ export function ResultScreen({ value, onBack }: {
 
   // Result alert
   const isCheaperAbroad = totalAbroad < localPrice;
-  const diff = Math.round(Math.abs(totalAbroad - localPrice));
+  const diff = Math.round(Math.abs(Math.round(totalAbroad) - Math.round(localPrice)));
+  
+  // Get country-specific information
+  const countryFlag = countryFlags[value.country] || "🌍";
+  const countryName = countryNames[value.country] || "الخارج";
 
   return (
     <div className="space-y-4" dir="rtl">
@@ -231,13 +259,13 @@ export function ResultScreen({ value, onBack }: {
       <Card className={`w-full ${isCheaperAbroad ? 'bg-green-100 text-green-800 border-green-300' : 'bg-gradient-to-r from-red-200 via-white to-gray-300 text-gray-900 border-zinc-500/10'}`}>
         <CardHeader>
           <CardTitle className="text-base">
-            {isCheaperAbroad ? '✔️ أرخص تجيبه من بره!' : '🇪🇬 أرخص تشتريه من مصر!'}
+            {isCheaperAbroad ? `${countryFlag} أرخص تجيبه من ${countryName}` : '🇪🇬 أرخص تشتريه من مصر!'}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
           {isCheaperAbroad
-            ? <>هتوفر حوالي <strong>{diff.toLocaleString('en-US')}</strong> جنيه لو جبته من بره.</>
-            : <>هتدفع حوالي <strong>{diff.toLocaleString('en-US')}</strong> جنيه زيادة لو جبته من بره.</>}
+            ? <>هتوفر حوالي <strong>{diff.toLocaleString('en-US')}</strong> جنيه لو جبته من {countryName}.</>
+            : <>هتدفع حوالي <strong>{diff.toLocaleString('en-US')}</strong> جنيه زيادة لو جبته من {countryName}.</>}
         </CardContent>
       </Card>
       {/* Breakdown Card */}
