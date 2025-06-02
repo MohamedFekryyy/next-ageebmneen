@@ -8,7 +8,7 @@ export function Footer() {
       <div className="max-w-md mx-auto text-center">
         <div className="text-sm text-zinc-600 space-y-2">
           <div className="flex items-center justify-center gap-2">
-            <span>🇪🇬</span>
+
             <span>أجيب منين</span>
             <span>🇪🇬</span>
           </div>
