@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Shimmer loading component
 function ShimmerSkeleton() {
@@ -25,9 +25,10 @@ function ShimmerSkeleton() {
 // Animated number counter
 function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string }) {
   const [displayValue, setDisplayValue] = useState(value);
+  const previousValue = useRef(value);
 
   useEffect(() => {
-    const start = displayValue;
+    const start = previousValue.current;
     const end = value;
     const startTime = Date.now();
     const duration = 300; // 300ms animation
@@ -35,24 +36,26 @@ function AnimatedNumber({ value, suffix = "" }: { value: number; suffix?: string
     function animate() {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing function for smooth animation
       const easeOut = 1 - Math.pow(1 - progress, 2);
       const current = start + (end - start) * easeOut;
-      
+
       setDisplayValue(current);
-      
+
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
         setDisplayValue(end);
       }
     }
-    
+
     if (Math.abs(end - start) > 0.01) {
       requestAnimationFrame(animate);
     }
-  }, [value, displayValue]);
+
+    previousValue.current = end;
+  }, [value]);
 
   return (
     <span>
