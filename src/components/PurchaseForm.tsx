@@ -26,7 +26,6 @@ const fallbackRates: Record<string, { cur: string; rate: number }> = {
   TUR: { cur: "TRY", rate: 1.56 },
   LBY: { cur: "LYD", rate: 10.3 },
   IRQ: { cur: "IQD", rate: 0.038 },
-  EGY: { cur: "EGP", rate: 1.0 },
   JOR: { cur: "JOD", rate: 70.5 },
   LBN: { cur: "LBP", rate: 0.033 },
   MAR: { cur: "MAD", rate: 5.5 },
@@ -35,7 +34,7 @@ const fallbackRates: Record<string, { cur: string; rate: number }> = {
 };
 
 const countryFlags: Record<string, string> = {
-  SAU: "🇸🇦", UAE: "🇦🇪", EUR: "🇪🇺", USA: "🇺🇸", KWT: "🇰🇼", OMN: "🇴🇲", QAT: "🇶🇦", TUR: "🇹🇷", LBY: "🇱🇾", IRQ: "🇮🇶", EGY: "🇪🇬", JOR: "🇯🇴", LBN: "🇱🇧", MAR: "🇲🇦", TUN: "🇹🇳", ALG: "🇩🇿"
+  SAU: "🇸🇦", UAE: "🇦🇪", EUR: "🇪🇺", USA: "🇺🇸", KWT: "🇰🇼", OMN: "🇴🇲", QAT: "🇶🇦", TUR: "🇹🇷", LBY: "🇱🇾", IRQ: "🇮🇶", JOR: "🇯🇴", LBN: "🇱🇧", MAR: "🇲🇦", TUN: "🇹🇳", ALG: "🇩🇿"
 };
 
 const countryNames: Record<string, string> = {
@@ -49,7 +48,6 @@ const countryNames: Record<string, string> = {
   TUR: "تركيا",
   LBY: "ليبيا",
   IRQ: "العراق",
-  EGY: "مصر",
   JOR: "الأردن",
   LBN: "لبنان",
   MAR: "المغرب",
@@ -69,7 +67,6 @@ const currencyMap: Record<string, string> = {
   TUR: "TRY",
   LBY: "LYD",
   IRQ: "IQD",
-  EGY: "EGP",
   JOR: "JOD",
   LBN: "LBP",
   MAR: "MAD",
@@ -133,7 +130,14 @@ export function PurchaseForm({ value, onChange, onNext }: {
         <CardContent className="space-y-3">
           {/* Country picker (bottom-sheet on mobile) */}
           <div>
-            <label htmlFor="country" className="block text-sm font-medium mb-1">اختر البلد</label>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <label htmlFor="country" className="block text-sm font-medium mb-1">اختر البلد</label>
+                </TooltipTrigger>
+                <TooltipContent side="top">البلد اللي هتشتري منها الموبايل</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             
             {/* Desktop Select (md and up) */}
             <div className="hidden md:block">
