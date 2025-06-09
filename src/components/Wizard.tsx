@@ -34,22 +34,29 @@ const defaultState: PurchaseState = {
   isSearching: false,
 };
 
-function HeroSection({ deviceSelected, selectedMode, onReset }: { 
+// Helper function to check if any meaningful form inputs have been filled
+function hasFilledInputs(purchase: PurchaseState): boolean {
+  return purchase.foreignPrice > 0 || purchase.localPrice > 0 || purchase.onePhone !== true;
+}
+
+function HeroSection({ deviceSelected, selectedMode, onReset, showResetButton }: { 
   deviceSelected: boolean; 
   selectedMode?: 'phone' | 'laptop';
   onReset?: () => void;
+  showResetButton: boolean;
 }) {
   return (
     <div className="mb-4">
-      <HeroCard deviceSelected={deviceSelected} selectedMode={selectedMode} onReset={onReset} />
+      <HeroCard deviceSelected={deviceSelected} selectedMode={selectedMode} onReset={onReset} showResetButton={showResetButton} />
     </div>
   );
 }
 
-function HeroCard({ deviceSelected, selectedMode, onReset }: { 
+function HeroCard({ deviceSelected, selectedMode, onReset, showResetButton }: { 
   deviceSelected: boolean; 
   selectedMode?: 'phone' | 'laptop';
   onReset?: () => void;
+  showResetButton: boolean;
 }) {
   const getDeviceIcon = () => {
     if (selectedMode === 'phone') return '📱';
@@ -79,9 +86,11 @@ function HeroCard({ deviceSelected, selectedMode, onReset }: {
               </div>
               <Image src="/am-logo.svg" alt="أجيب منين" height={32} width={120} className="h-5 w-auto" priority />
             </div>
-            <Button variant="ghost" size="sm" onClick={onReset} className="text-xs flex items-center gap-1">
-              🔄 اعادة البدء
-            </Button>
+            {showResetButton && (
+              <Button variant="ghost" size="sm" onClick={onReset} className="text-xs flex items-center gap-1">
+                🔄 اعادة البدء
+              </Button>
+            )}
           </div>
         ) : (
           // Full layout when no device is selected
@@ -108,6 +117,9 @@ export function Wizard() {
   const noDeviceSelected = step === 'input' && !purchase.mode;
   const deviceSelected = step === 'input' && !!purchase.mode;
   
+  // Check if any meaningful form inputs have been filled
+  const showResetButton = hasFilledInputs(purchase);
+  
   const handleReset = () => {
     setPurchase(defaultState);
     setStep('input');
@@ -119,6 +131,7 @@ export function Wizard() {
         deviceSelected={deviceSelected} 
         selectedMode={purchase.mode || undefined}
         onReset={handleReset} 
+        showResetButton={showResetButton}
       />
       <ProgressIndicator step={step} />
       {step === 'input' ? (
