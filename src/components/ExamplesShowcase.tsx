@@ -4,12 +4,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeftIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface ExampleDevice {
   id: string;
   name: string;
   brand: string;
   category: string;
+  image: string;
   egyptPrice: number;
   comparison: {
     country: string;
@@ -29,6 +31,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'galaxy-s24-ultra',
     name: 'Galaxy S24 Ultra',
     brand: 'Samsung',
+    // Official image from GSMArena
+    image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-.jpg',
     category: 'موبايل',
     egyptPrice: 51999,
     comparison: {
@@ -47,6 +51,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'iphone-15-pro-max',
     name: 'iPhone 15 Pro Max',
     brand: 'Apple',
+    // Official image from GSMArena
+    image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg',
     category: 'موبايل',
     egyptPrice: 71500,
     comparison: {
@@ -65,6 +71,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'redmi-note-11s',
     name: 'Redmi Note 11S',
     brand: 'Xiaomi',
+    // Official image from GSMArena
+    image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11s-5g.jpg',
     category: 'موبايل',
     egyptPrice: 8444,
     comparison: {
@@ -83,6 +91,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'moto-g85-5g',
     name: 'Moto G85 5G',
     brand: 'Motorola',
+    // Official image from GSMArena
+    image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g85.jpg',
     category: 'موبايل',
     egyptPrice: 14933,
     comparison: {
@@ -135,9 +145,20 @@ function ExampleResult({ device, onBack, onStartCalculation }: ExampleResultProp
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-lg">{device.name}</CardTitle>
-              <p className="text-sm text-muted-foreground">{device.brand}</p>
+            <div className="flex items-center gap-3">
+              <div className="relative h-12 w-12">
+                <Image
+                  src={device.image}
+                  alt={device.name}
+                  fill
+                  sizes="48px"
+                  className="object-cover rounded-md"
+                />
+              </div>
+              <div>
+                <CardTitle className="text-lg">{device.name}</CardTitle>
+                <p className="text-sm text-muted-foreground">{device.brand}</p>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -266,19 +287,15 @@ export function ExamplesShowcase({ onStartCalculation }: ExamplesShowcaseProps) 
             onClick={() => setSelectedDevice(device)}
           >
             <CardContent className="pt-4">
-              {/* Device Image Placeholder */}
-              <div className={`w-full h-24 rounded-lg mb-3 flex items-center justify-center ${
-                device.brand === 'Samsung' ? 'bg-gradient-to-br from-blue-200 to-blue-300' :
-                device.brand === 'Apple' ? 'bg-gradient-to-br from-gray-200 to-gray-400' :
-                device.brand === 'Xiaomi' ? 'bg-gradient-to-br from-orange-200 to-orange-300' :
-                'bg-gradient-to-br from-purple-200 to-purple-300'
-              }`}>
-                <span className="text-2xl">
-                  {device.brand === 'Apple' ? '🍎' : 
-                   device.brand === 'Samsung' ? '📱' :
-                   device.brand === 'Xiaomi' ? '🔥' : '📲'}
-                </span>
-              </div>
+          <div className="w-full h-24 relative mb-3 rounded-lg overflow-hidden">
+            <Image
+              src={device.image}
+              alt={device.name}
+              fill
+              sizes="120px"
+              className="object-cover"
+            />
+          </div>
               
               <div className="flex items-center justify-between mb-2">
                 <div className="min-w-0 flex-1">
