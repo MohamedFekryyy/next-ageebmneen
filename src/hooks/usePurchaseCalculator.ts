@@ -1,5 +1,5 @@
 export interface PurchaseState {
-  mode?: 'phone' | 'laptop' | null;
+  mode?: 'phone' | null;
   country: string;
   foreignPrice: number;
   localPrice: number;
@@ -68,16 +68,9 @@ export function usePurchaseCalculator(
   let tax = 0;
   let customs = 0;
   
-  if (state.mode === 'phone') {
-    // Fixed 38.5% combined customs and tax rate for phones
-    // Apply to all imported phones (removing threshold and onePhone exemption for now)
-    customs = Math.round(base * 0.385);
-    tax = 0; // Already included in customs rate
-  } else if (state.mode === 'laptop') {
-    // Laptops only have VAT, no customs
-    tax = Math.round(base * (state.taxRate / 100));
-    customs = 0;
-  }
+  // Fixed 38.5% combined customs and tax rate for phones
+  customs = Math.round(base * 0.385);
+  tax = 0; // Already included in customs rate
   
   const totalAbroad = Math.round(base + tax + customs);
   return { base, tax, customs, totalAbroad };

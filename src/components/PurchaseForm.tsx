@@ -107,14 +107,14 @@ export function PurchaseForm({ value, onChange, onNext }: {
   const [countrySheetOpen, setCountrySheetOpen] = useState(false);
   const { rates: liveRates, isLoading: ratesLoading, error: ratesError } = useExchangeRates();
 
-  // Set mode to phone by default if not set
-  if (!value.mode) {
-    onChange({ ...value, mode: 'phone' });
-  }
-
   // Helper: update a single field
   function update<K extends keyof PurchaseState>(key: K, val: PurchaseState[K]) {
-    onChange({ ...value, [key]: val });
+    // Set mode to phone by default when user starts interacting with the form
+    if (!value.mode && (key === 'foreignPrice' || key === 'localPrice' || key === 'country')) {
+      onChange({ ...value, [key]: val, mode: 'phone' });
+    } else {
+      onChange({ ...value, [key]: val });
+    }
   }
 
   // Get exchange rate (live or fallback)

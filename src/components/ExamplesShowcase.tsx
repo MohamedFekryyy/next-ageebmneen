@@ -31,8 +31,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'galaxy-s24-ultra',
     name: 'Galaxy S24 Ultra',
     brand: 'Samsung',
-    // Official image from GSMArena
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra-5g-.jpg',
+    // Use the specific Galaxy phone image
+    image: '/images/@galaxy icon.png',
     category: 'موبايل',
     egyptPrice: 51999,
     comparison: {
@@ -51,8 +51,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'iphone-15-pro-max',
     name: 'iPhone 15 Pro Max',
     brand: 'Apple',
-    // Official image from GSMArena
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg',
+    // Use the specific iPhone image
+    image: '/images/@iphone icon.png',
     category: 'موبايل',
     egyptPrice: 71500,
     comparison: {
@@ -71,8 +71,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'redmi-note-11s',
     name: 'Redmi Note 11S',
     brand: 'Xiaomi',
-    // Official image from GSMArena
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-redmi-note-11s-5g.jpg',
+    // Use a generic phone image for Xiaomi (you can replace with specific Xiaomi image if available)
+    image: '/images/xiaomi-phone.png',
     category: 'موبايل',
     egyptPrice: 8444,
     comparison: {
@@ -91,8 +91,8 @@ const exampleDevices: ExampleDevice[] = [
     id: 'moto-g85-5g',
     name: 'Moto G85 5G',
     brand: 'Motorola',
-    // Official image from GSMArena
-    image: 'https://fdn2.gsmarena.com/vv/bigpic/motorola-moto-g85.jpg',
+    // Use a generic phone image for Motorola (you can replace with specific Motorola image if available)
+    image: '/images/motorola-phone.png',
     category: 'موبايل',
     egyptPrice: 14933,
     comparison: {
