@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import type { PurchaseState } from '../hooks/usePurchaseCalculator';
 import { usePurchaseCalculator } from '../hooks/usePurchaseCalculator';
 import { useExchangeRates } from '@/hooks/useExchangeRates';
-import { logSubmission, createSubmissionData } from '@/lib/analytics';
+import { logSubmission, createSubmissionData, validateSubmissionData } from '@/lib/analytics';
 import PriceBreakdown from './PriceBreakdown';
 import { SocialShare } from './SocialShare';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -66,7 +66,21 @@ export function ResultScreen({ value, onBack }: {
   // Log submission data
   useEffect(() => {
     const submissionData = createSubmissionData(value, totalAbroad, localPrice);
-    logSubmission(submissionData);
+    
+    // Validate data before logging
+    if (validateSubmissionData && validateSubmissionData(submissionData)) {
+      logSubmission(submissionData).then(result => {
+        // In development, we can show more detailed feedback
+        if (process.env.NODE_ENV === 'development' && !result.success) {
+          console.warn('Logging failed:', result.error);
+        }
+      }).catch(error => {
+        // This shouldn't happen with the new implementation, but just in case
+        console.warn('Unexpected logging error:', error);
+      });
+    } else {
+      console.warn('Invalid submission data, skipping log:', submissionData);
+    }
   }, [value, totalAbroad, localPrice]);
 
   // Chart data

@@ -97,11 +97,39 @@ export default function AdminPage() {
               <p className="text-sm"><strong>البيئة:</strong> {environment === 'production' ? 'الإنتاج' : 'التطوير'}</p>
               <p className="text-sm">{message}</p>
               {environment === 'production' && (
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-800">
-                    <strong>ملاحظة:</strong> في بيئة الإنتاج، يتم حفظ السجلات في سجلات Vercel. 
-                    يمكنك الوصول إليها من لوحة تحكم Vercel تحت &quot;Functions&quot; → &quot;View Function Logs&quot; والبحث عن &quot;SUBMISSION_LOG&quot;.
-                  </p>
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-900 mb-2">📊 الوصول لسجلات الإنتاج</h4>
+                  <div className="space-y-2 text-sm text-blue-800">
+                    <p>
+                      <strong>طريقة 1 - سجلات Vercel:</strong>
+                    </p>
+                    <ol className="list-decimal list-inside space-y-1 mr-4">
+                      <li>اذهب إلى <a href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer" className="underline">لوحة تحكم Vercel</a></li>
+                      <li>اختر مشروع &quot;next-ageebmneen&quot;</li>
+                      <li>اذهب إلى تبويب &quot;Functions&quot;</li>
+                      <li>اضغط على &quot;View Function Logs&quot;</li>
+                      <li>ابحث عن &quot;SUBMISSION_LOG&quot; في السجلات</li>
+                    </ol>
+                    
+                    <p className="mt-3">
+                      <strong>طريقة 2 - خدمة خارجية:</strong>
+                    </p>
+                    <p>
+                      يمكنك إعداد webhook خارجي لحفظ السجلات في قاعدة بيانات أو خدمة تحليلات.
+                      أضف المتغيرات التالية في إعدادات Vercel:
+                    </p>
+                    <div className="bg-blue-100 p-2 rounded mt-2 font-mono text-xs">
+                      LOGGING_WEBHOOK_URL=https://your-service.com/webhook<br/>
+                      LOGGING_WEBHOOK_TOKEN=your_token
+                    </div>
+                    
+                    <p className="mt-3">
+                      <strong>طريقة 3 - تحليلات متقدمة:</strong>
+                    </p>
+                    <p>
+                      يمكنك دمج خدمات مثل Google Analytics، Mixpanel، أو PostHog لتحليل أكثر تفصيلاً.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

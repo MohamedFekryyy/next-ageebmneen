@@ -77,6 +77,27 @@ const currencyMap: Record<string, string> = {
   ALG: "DZD"
 };
 
+// Map countries to their respective shopping sites
+const countrySites: Record<string, { name: string; url: string }> = {
+  SAU: { name: "Amazon Saudi Arabia", url: "https://www.amazon.sa" },
+  UAE: { name: "Amazon UAE", url: "https://www.amazon.ae" },
+  KWT: { name: "OpenSooq", url: "https://www.opensooq.com" },
+  OMN: { name: "Sharaf DG Oman", url: "https://oman.sharafdg.com" },
+  QAT: { name: "AliExpress", url: "https://www.aliexpress.com" },
+  TUR: { name: "Trendyol", url: "https://www.trendyol.com" },
+  LBY: { name: "OpenSooq Libya", url: "https://ly.opensooq.com" },
+  EUR: { name: "Amazon Europe", url: "https://www.amazon.de" },
+  USA: { name: "Amazon US", url: "https://www.amazon.com" },
+  // Add fallbacks for other countries
+  IRQ: { name: "OpenSooq", url: "https://www.opensooq.com" },
+  EGY: { name: "Jumia Egypt", url: "https://www.jumia.com.eg" },
+  JOR: { name: "OpenSooq", url: "https://www.opensooq.com" },
+  LBN: { name: "OpenSooq", url: "https://www.opensooq.com" },
+  MAR: { name: "Jumia Morocco", url: "https://www.jumia.ma" },
+  TUN: { name: "Jumia Tunisia", url: "https://www.jumia.com.tn" },
+  ALG: { name: "Jumia Algeria", url: "https://www.jumia.dz" }
+};
+
 export function PurchaseForm({ value, onChange, onNext }: {
   value: PurchaseState;
   onChange: (v: PurchaseState) => void;
@@ -226,6 +247,21 @@ export function PurchaseForm({ value, onChange, onNext }: {
               isLoading={ratesLoading}
               error={ratesError}
             />
+            
+            {/* Helper text with shopping site link */}
+            {value.country && countrySites[value.country] && (
+              <div className="text-xs text-muted-foreground mt-2 p-2 bg-gray-50 rounded-md">
+                <span>ابحث عن جهازك في </span>
+                <a 
+                  href={countrySites[value.country].url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline font-medium"
+                >
+                  {countrySites[value.country].name}
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Local price input - manual mode only */}
