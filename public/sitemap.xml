@@ -4,71 +4,81 @@
   <!-- Main page -->
   <url>
     <loc>https://ageebmneen.vercel.app/</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="ar" href="https://ageebmneen.vercel.app/" />
     <xhtml:link rel="alternate" hreflang="ar-EG" href="https://ageebmneen.vercel.app/" />
   </url>
   
+  <!-- Premium service page -->
+  <url>
+    <loc>https://ageebmneen.vercel.app/premium</loc>
+    <lastmod>2025-06-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ageebmneen.vercel.app/premium" />
+    <xhtml:link rel="alternate" hreflang="ar-EG" href="https://ageebmneen.vercel.app/premium" />
+  </url>
+  
   <!-- Individual product comparison pages -->
   <url>
     <loc>https://ageebmneen.vercel.app/compare/iphone-15-pro-max-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/iphone-15-128gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/iphone-14-128gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/samsung-galaxy-s24-ultra-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/samsung-galaxy-s23-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/xiaomi-14-ultra-512gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/xiaomi-redmi-note-13-pro-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/google-pixel-8-pro-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/oneplus-12-256gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/realme-c55-128gb</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -76,37 +86,37 @@
   <!-- Brand comparison pages -->
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/apple</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/samsung</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/xiaomi</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/google</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/oneplus</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/brand/realme</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -114,19 +124,19 @@
   <!-- Category comparison pages -->
   <url>
     <loc>https://ageebmneen.vercel.app/compare/category/flagship</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/category/mid-range</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/category/budget</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -134,19 +144,19 @@
   <!-- Price range comparison pages -->
   <url>
     <loc>https://ageebmneen.vercel.app/compare/under-20000</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/20000-50000</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://ageebmneen.vercel.app/compare/over-50000</loc>
-    <lastmod>2025-06-02</lastmod>
+    <lastmod>2025-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
