@@ -28,10 +28,6 @@ const defaultState: PurchaseState = {
   caught: true,
   taxRate: 18,
   onePhone: true,
-  // Advanced search fields
-  searchMode: 'manual',
-  deviceQuery: '',
-  isSearching: false,
 };
 
 // Helper function to check if any meaningful form inputs have been filled

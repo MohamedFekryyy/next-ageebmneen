@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { Smartphone, TrendingUp, Star, Zap, Search } from 'lucide-react';
+import { Smartphone, TrendingUp, Star } from 'lucide-react';
 
 export function PopularLinks() {
   const popularLinks = [
@@ -109,8 +109,6 @@ export function PopularLinks() {
         return 'border-orange-200 hover:border-orange-300 bg-orange-50/50 hover:bg-orange-50 shadow-none hover:shadow-md';
       case 'budget':
         return 'border-purple-200 hover:border-purple-300 bg-purple-50/50 hover:bg-purple-50 shadow-none hover:shadow-md';
-      case 'premium':
-        return 'border-yellow-200 hover:border-yellow-300 bg-gradient-to-r from-yellow-50 to-orange-50 hover:from-yellow-100 hover:to-orange-100 shadow-none hover:shadow-lg';
       default:
         return 'border-gray-200 hover:border-gray-300 bg-gray-50/50 hover:bg-gray-50 shadow-none hover:shadow-md';
     }
@@ -119,36 +117,6 @@ export function PopularLinks() {
   return (
     <div className="py-8 px-4" dir="rtl">
       <div className="max-w-6xl mx-auto">
-        {/* Premium Service Banner */}
-        <div className="mb-8">
-          <Link href="/premium">
-            <Card className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all duration-300 cursor-pointer">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-6 h-6 text-yellow-300" />
-                      <Search className="w-6 h-6 text-yellow-300" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold mb-1">🚀 الخدمة المميزة الجديدة</h3>
-                      <p className="text-blue-100">
-                        اكتشف أسعار المنتجات في الوقت الفعلي باستخدام الذكاء الاصطناعي
-                      </p>
-                    </div>
-                  </div>
-                  <div className="hidden md:flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg">
-                    <span className="text-sm font-medium">جرب مجاناً</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">مقارنات شائعة</h2>
           <p className="text-gray-600">اكتشف أسعار أشهر الموبايلات في مصر والخارج</p>

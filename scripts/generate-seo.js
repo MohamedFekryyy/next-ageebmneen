@@ -38,16 +38,6 @@ function generateSitemap() {
     <xhtml:link rel="alternate" hreflang="ar-EG" href="${baseUrl}/" />
   </url>
   
-  <!-- Premium service page -->
-  <url>
-    <loc>${baseUrl}/premium</loc>
-    <lastmod>${currentDate}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="ar" href="${baseUrl}/premium" />
-    <xhtml:link rel="alternate" hreflang="ar-EG" href="${baseUrl}/premium" />
-  </url>
-  
   <!-- Individual product comparison pages -->`;
 
   // Add individual product pages
