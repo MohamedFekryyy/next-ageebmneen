@@ -250,7 +250,7 @@ export function PurchaseForm({ value, onChange, onNext }: {
             
             {/* Helper text with shopping site link */}
             {value.country && countrySites[value.country] && (
-              <div className="text-xs text-muted-foreground mt-2 p-2 bg-gray-50 rounded-md">
+              <div className="text-xs text-muted-foreground mt-2">
                 <span>ابحث عن جهازك في </span>
                 <a 
                   href={countrySites[value.country].url} 
